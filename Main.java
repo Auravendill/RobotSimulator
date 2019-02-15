@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 public class Main extends JPanel implements KeyListener {
 	static int Vl =0;
 	static int Vr =0;
-	static int Angle =90;
+	static int Angle =0;
 	static int Xpos = 100;
 	static int Ypos =200;
 	int radius = 15;//15 pixels
@@ -37,15 +37,15 @@ public class Main extends JPanel implements KeyListener {
 		
 		
 		
-		try {
-			TimeUnit.SECONDS.sleep(2);
-		} catch (InterruptedException e) {
+		//try {
+		//	TimeUnit.SECONDS.sleep(2);
+		//} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    Xpos = 150; 
-	    Angle=0;
-	    frame.repaint();
+			//e.printStackTrace();
+		//}
+	    //Xpos = 150; 
+	    //Angle=0;
+	    //frame.repaint();
 		
 		/*while(itterate) {
 			int[] NewPos = Movement(Vl, Vr, Angle, Xpos, Ypos);
@@ -74,7 +74,7 @@ public class Main extends JPanel implements KeyListener {
 		
 		g.setColor(Color.RED);
 
-		g.drawLine(Xpos, Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle))),(int)( Ypos+radius* -Math.cos(Math.toRadians(Angle))));
+		g.drawLine(Xpos, Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* -Math.cos(Math.toRadians(Angle+90))));
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
