@@ -5,7 +5,7 @@ public class Motion {
     private double deltaTime ;
 
     private final double l = 3;
-    private final double vMax = 3;
+    private final double vMax = 5;
 
 
     public Motion(double x, double y, double theta, double vLeft, double vRight, double deltaTime){
@@ -23,7 +23,9 @@ public class Motion {
 
         double[] arr0 = new double[3];
         if (vLeft > vMax) vLeft = vMax;
+        if (vLeft < -vMax) vLeft = -vMax;
         if (vRight > vMax) vRight = vMax;
+        if (vRight < -vMax) vRight = -vMax;
 
         if (vRight == vLeft) {
             arr0[0] = x + vLeft*deltaTime*Math.cos(theta);

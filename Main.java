@@ -36,10 +36,8 @@ public class Main extends JPanel implements KeyListener {
 
 		frame.setVisible(true);
 
-		// need deltaTime........
         Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 
-        // containing three elements: position x,y and angle        
 		
 		
 		
