@@ -36,8 +36,10 @@ public class Main extends JPanel implements KeyListener {
 
 		frame.setVisible(true);
 
+		// need deltaTime........
         Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 
+        // containing three elements: position x,y and angle        
 		
 		
 		
@@ -58,10 +60,17 @@ public class Main extends JPanel implements KeyListener {
 			
 			double[] NewPos = motion.motion();
 			//if(collision(NewPos[0], NewPos[1]) == false) {
+			
 				Xpos = NewPos[0];
 				Ypos = NewPos[1];
 				Angle = Math.toDegrees(NewPos[2]);
-				
+				if(Angle>=360) {
+					Angle =Angle - 360;
+				}
+				if(Angle<=-360) {
+					Angle =Angle + 360;
+				}
+				System.out.println(Ypos);
 				frame.repaint();
 			//}
 			//else {
@@ -119,6 +128,18 @@ public class Main extends JPanel implements KeyListener {
             else if("G".contentEquals(Character.toString(c))) {
             	Vr = Vr - 1;
             	Vl = Vl - 1;
+            }
+            if(Vr >5) {
+            	Vr = 5;
+            }
+            if(Vl >5) {
+            	Vl = 5;
+            }
+            if(Vr <-5) {
+            	Vr = -5;
+            }
+            if(Vl <-5) {
+            	Vl = -5;
             }
             System.out.println("Vl = "+Vl);
             System.out.println("Vr = "+Vr);
