@@ -70,7 +70,7 @@ public class Main extends JPanel implements KeyListener {
 				if(Angle<=-360) {
 					Angle =Angle + 360;
 				}
-				System.out.println(Ypos);
+				//System.out.println(Ypos);
 				frame.repaint();
 			//}
 			//else {
@@ -125,7 +125,7 @@ public class Main extends JPanel implements KeyListener {
             	Vr = Vr + 1;
             	Vl = Vl + 1;
             }
-            else if("G".contentEquals(Character.toString(c))) {
+            else if("g".contentEquals(Character.toString(c))) {
             	Vr = Vr - 1;
             	Vl = Vl - 1;
             }
