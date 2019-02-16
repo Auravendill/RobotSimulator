@@ -56,7 +56,7 @@ public class Main extends JPanel implements KeyListener {
 				e.printStackTrace();
 			}
 			//System.out.println(Xpos);
-			new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
+			motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 			
 			double[] NewPos = motion.motion();
 			//if(collision(NewPos[0], NewPos[1]) == false) {
@@ -122,7 +122,9 @@ public class Main extends JPanel implements KeyListener {
             	Vr = Vr - 1;
             	Vl = Vl - 1;
             }
-            System.out.println(c);
+            System.out.println("Vl = "+Vl);
+            System.out.println("Vr = "+Vr);
+            
             
             
         }
