@@ -26,8 +26,10 @@ public class Motion {
         if (vRight > vMax) vRight = vMax;
 
         if (vRight == vLeft) {
-            x += vLeft;
-            y += vRight;
+            arr0[0] = x + vLeft;
+            arr0[1] = y + vRight;
+            arr0[2] = theta;
+
 
         } else {
 
