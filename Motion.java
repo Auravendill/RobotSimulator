@@ -59,10 +59,7 @@ public class Motion {
             }
 
         }
-        x = arr0[0];
-        y = arr0[1];
-        theta = arr0[2];
-
+        if (arr0[2] < 0) arr0[2] += 2*Math.PI;
 
         return arr0;
     }
