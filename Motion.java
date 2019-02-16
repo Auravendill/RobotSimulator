@@ -29,7 +29,7 @@ public class Motion {
 
         if (vRight == vLeft) {
             arr0[0] = x + vLeft*deltaTime*Math.cos(theta);
-            arr0[1] = y + vRight*deltaTime*Math.sin(theta);
+            arr0[1] = y - vRight*deltaTime*Math.sin(theta);
             arr0[2] = theta;
 
 
@@ -40,7 +40,7 @@ public class Motion {
             double w = (vRight - vLeft) / l;
 
             // ICC
-            double ICCx = x - R * Math.sin(theta);
+            double ICCx = x + R * Math.sin(theta);
             double ICCy = y + R * Math.cos(theta);
 
             // new position and angle

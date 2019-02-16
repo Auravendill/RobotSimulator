@@ -47,7 +47,7 @@ public class Main extends JPanel implements KeyListener {
 		//Xpos = 150;
 		//Angle=0;
 		//frame.repaint();
-
+		
 		while(itterate) {
 			try {
 				TimeUnit.SECONDS.sleep(1);
@@ -62,7 +62,10 @@ public class Main extends JPanel implements KeyListener {
 			//if(collision(NewPos[0], NewPos[1]) == false) {
 
 			Xpos = NewPos[0];
+			
+			
 			Ypos = NewPos[1];
+			
 			Angle = Math.toDegrees(NewPos[2]);
 			if(Angle>=360) {
 				Angle =Angle - 360;
