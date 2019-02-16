@@ -14,8 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Main extends JPanel implements KeyListener {
-	static double Vl =1;
-	static double Vr =1;
+	static double Vl =0;
+	static double Vr =0;
 	static double Angle =0;
 	static double Xpos = 100;
 	static double Ypos =200;
@@ -85,7 +85,7 @@ public class Main extends JPanel implements KeyListener {
 		
 		g.setColor(Color.RED);
 
-		g.drawLine((int)Xpos, (int)Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* -Math.cos(Math.toRadians(Angle+90))));
+		g.drawLine((int)Xpos, (int)Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* Math.cos(Math.toRadians(Angle+90))));
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
