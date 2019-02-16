@@ -26,8 +26,8 @@ public class Motion {
         if (vRight > vMax) vRight = vMax;
 
         if (vRight == vLeft) {
-            arr0[0] = (x + vLeft)*deltaTime*Math.cos(theta);
-            arr0[1] = (y + vRight)*deltaTime*Math.sin(theta);
+            arr0[0] = x + vLeft*deltaTime*Math.cos(theta);
+            arr0[1] = y + vRight*deltaTime*Math.sin(theta);
             arr0[2] = theta;
 
 
