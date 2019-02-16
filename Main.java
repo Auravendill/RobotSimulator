@@ -14,13 +14,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Main extends JPanel implements KeyListener {
-	static int Vl =0;
-	static int Vr =0;
-	static int Angle =0;
-	static int Xpos = 100;
-	static int Ypos =200;
+	static double Vl =1;
+	static double Vr =1;
+	static double Angle =0;
+	static double Xpos = 100;
+	static double Ypos =200;
+	static double deltaTime = 1;
 	int radius = 15;//15 pixels
-	boolean itterate = true;
+	static boolean itterate = true;
 	
 	public static void main(String[] args) {
 		
@@ -36,36 +37,40 @@ public class Main extends JPanel implements KeyListener {
 		frame.setVisible(true);
 
 		// need deltaTime........
-        Motion motion = new Motion(Xpos, Ypos, Angle, Vl, Vr, deltaTime);
+        Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 
-        // containing three elements: position x,y and angle
-        double[] NewPosition = motion.motion();
+        // containing three elements: position x,y and angle        
 		
 		
 		
-		//try {
-		//	TimeUnit.SECONDS.sleep(2);
-		//} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		//}
+		
 	    //Xpos = 150; 
 	    //Angle=0;
 	    //frame.repaint();
 		
-		/*while(itterate) {
-			int[] NewPos = Movement(Vl, Vr, Angle, Xpos, Ypos);
-			if(collision(NewPos[0], NewPos[1]) == false) {
+		while(itterate) {
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(Xpos);
+			new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
+			
+			double[] NewPos = motion.motion();
+			//if(collision(NewPos[0], NewPos[1]) == false) {
 				Xpos = NewPos[0];
 				Ypos = NewPos[1];
-				Angle = NewPos[2];
-				draw(Xpos, Ypos, Angle);
-			}
-			else {
+				Angle = Math.toDegrees(NewPos[2]);
+				
+				frame.repaint();
+			//}
+			//else {
 				//do collision things
-				draw(Xpos, Ypos, Angle);
-			}
-		}*/
+				//draw(Xpos, Ypos, Angle);
+			//}
+		}
 				
 	}
 	public void paint(Graphics g){
@@ -76,11 +81,11 @@ public class Main extends JPanel implements KeyListener {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
 		}
 
-		g.drawOval(Xpos-radius,Ypos-radius,radius*2,radius*2);
+		g.drawOval((int)Xpos-radius,(int)Ypos-radius,radius*2,radius*2);
 		
 		g.setColor(Color.RED);
 
-		g.drawLine(Xpos, Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* -Math.cos(Math.toRadians(Angle+90))));
+		g.drawLine((int)Xpos, (int)Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* -Math.cos(Math.toRadians(Angle+90))));
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
