@@ -15,7 +15,7 @@ public class Sensor {
 		this.offsetY0 = offsetY;
 	}
 
-	public Sensor(int angle, double distance) {
+	public Sensor(double angle, double distance, boolean dummy) {
 		this.offsetX = Math.cos(angle) * distance;
 		this.offsetY = Math.sin(angle) * distance;
 		this.offsetX0 = offsetX;
