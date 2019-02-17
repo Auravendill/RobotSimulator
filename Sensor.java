@@ -16,8 +16,8 @@ public class Sensor {
 	}
 
 	public Sensor(double angle, double distance, boolean dummy) {
-		this.offsetX = Math.cos(angle) * distance;
-		this.offsetY = Math.sin(angle) * distance;
+		this.offsetX = Math.cos(-1.0 * angle) * distance;
+		this.offsetY = Math.sin(-1.0 * angle) * distance;
 		this.offsetX0 = offsetX;
 		this.offsetY0 = offsetY;
 	}
@@ -32,11 +32,11 @@ public class Sensor {
 		this.robotPositionY = robotPositionY;
 
 		double distance = Math.sqrt(offsetX0 * offsetX0 + offsetY0 * offsetY0);
-		double oldAngle = Math.asin(offsetY0 / distance);
+		double oldAngle = -1.0 * Math.asin(offsetY0 / distance);
 		double newAngle = oldAngle + robotAngle;
 
-		this.offsetX = Math.cos(newAngle) * distance;
-		this.offsetY = Math.sin(newAngle) * distance;
+		this.offsetX = Math.cos(-1.0 * newAngle) * distance;
+		this.offsetY = Math.sin(-1.0 * newAngle) * distance;
 	}
 
 	public double getDistanceTo(double startX, double startY, double endX, double endY) {
