@@ -22,6 +22,11 @@ public class Sensor {
 		this.offsetY0 = offsetY;
 	}
 
+	public String toString() {
+		return "Starting Offset: x=" + offsetX0 + ", y=" + offsetY0 + "\nCurrent Offset x=" + offsetX + ", y="
+				+ offsetY;
+	}
+
 	public void updatePosition(double robotPositionX, double robotPositionY, double robotAngle) {
 		this.robotPositionX = robotPositionX;
 		this.robotPositionY = robotPositionY;
