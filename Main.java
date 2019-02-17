@@ -20,7 +20,7 @@ public class Main extends JPanel implements KeyListener {
 	static double Xpos = 100;
 	static double Ypos =200;
 	static double deltaTime = 1;
-	int radius = 15;//15 pixels
+	static int radius = 15;//15 pixels
 	static boolean itterate = true;
 
 	public static void main(String[] args) {
@@ -42,8 +42,8 @@ public class Main extends JPanel implements KeyListener {
 		// containing three elements: position x,y and angle
 
 
-
-
+		UseSensors sensor = new UseSensors();
+		sensor.GetDistances(Xpos, Ypos, Angle, radius);
 		//Xpos = 150;
 		//Angle=0;
 		//frame.repaint();
@@ -73,7 +73,7 @@ public class Main extends JPanel implements KeyListener {
 			if(Angle<=-360) {
 				Angle =Angle + 360;
 			}
-			System.out.println("(" + Xpos + ", " + Ypos + ")");
+			//System.out.println("(" + Xpos + ", " + Ypos + ")");
 			frame.repaint();
 			//}
 			//else {
