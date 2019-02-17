@@ -38,7 +38,10 @@ public class Sensor {
 		double vx = endX - startX;
 		double vy = endY - startY;
 
-		double delta = (robotPositionY * offsetX + startX + robotPositionX) / (offsetX * vy - vx);
+		// double delta = (robotPositionY * offsetX + startX + robotPositionX) /
+		// (offsetX * vy - vx);
+		double delta = (robotPositionY - startY + (startX * offsetY + robotPositionX * offsetY) / offsetX)
+				/ (vy - (vx * offsetY) / (offsetX));
 		double lambda = (startX + delta * vx + robotPositionX) / offsetX;
 
 		if (delta > 1.0 || delta < 0.0) {
