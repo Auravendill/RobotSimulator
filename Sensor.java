@@ -43,12 +43,14 @@ public class Sensor {
 		double vx = endX - startX;
 		double vy = endY - startY;
 
+		double epsilon = 0.0000000001;
+
 		if (offsetY == 0.0 && vy == 0.0) {
 			return Double.MAX_VALUE;
 		}
 
-		if (offsetX == 0.0) {
-			if (vx == 0.0) {
+		if (offsetX < epsilon && offsetX > -1.0 * epsilon) {
+			if (vx < epsilon && vx > -1.0 * epsilon) {
 				return Double.MAX_VALUE;
 			} else {
 				double delta = (robotPositionX - startX) / vx;
