@@ -43,6 +43,35 @@ public class Sensor {
 		double vx = endX - startX;
 		double vy = endY - startY;
 
+		if (offsetY == 0.0 && vy == 0.0) {
+			return Double.MAX_VALUE;
+		}
+
+		if (offsetX == 0.0) {
+			if (vx == 0.0) {
+				return Double.MAX_VALUE;
+			} else {
+				double delta = (robotPositionX - startX) / vx;
+				double lambda = (startY + delta * vy - robotPositionY) / offsetY;
+
+				if (delta > 1.0 || delta < 0.0) {
+					// wall too short
+					return Double.MAX_VALUE;
+				}
+
+				lambda -= 1.0;
+
+				if (lambda < 0.0) {
+					if (lambda >= -2.0) {
+						// wall is inside robot
+						return -1.0;
+					}
+					// wall is on the wrong side
+					return Double.MAX_VALUE;
+				}
+			}
+		}
+
 		// double delta = (robotPositionY * offsetX + startX + robotPositionX) /
 		// (offsetX * vy - vx);
 		double delta = (robotPositionY - startY + (startX * offsetY - robotPositionX * offsetY) / offsetX)
