@@ -20,13 +20,13 @@ import javax.swing.JPanel;
 public class Main extends JPanel implements KeyListener {
 	static double Vl =0;
 	static double Vr =0;
-	static double Angle =180;
+	static double Angle =0;
 	static double Xpos = 100;
 	static double Ypos =200;
 	static double deltaTime = 1;
 	static int radius = 15;//15 pixels
 	static boolean itterate = true;
-
+	UseSensors sensor = new UseSensors();
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame("Robot Controller");
@@ -48,8 +48,8 @@ public class Main extends JPanel implements KeyListener {
 		// containing three elements: position x,y and angle
 
 
-		//UseSensors sensor = new UseSensors();
-		//sensor.GetDistances(Xpos, Ypos, Angle, radius);
+		
+		
 		//Xpos = 150;
 		//Angle=0;
 		//frame.repaint();
@@ -71,7 +71,7 @@ public class Main extends JPanel implements KeyListener {
 			int colisionCounter =0;
 			
 			for(int i=0; i<walls.length;i++) {
-				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),new Point(walls[i][2], walls[i][3]), new Point(NewPos[0], NewPos[1]), 15);
+				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),new Point(walls[i][2], walls[i][3]), new Point(NewPos[0], NewPos[1]), radius);
 				if(p.size()>0) {
 					
 					
@@ -102,6 +102,7 @@ public class Main extends JPanel implements KeyListener {
 			Ypos = NewPos[1];
 			
 			Angle = Math.toDegrees(NewPos[2]);
+			
 			}
 			else {
 				
@@ -153,6 +154,24 @@ public class Main extends JPanel implements KeyListener {
 		g.setColor(Color.RED);
 
 		g.drawLine((int)Xpos, (int)Ypos,(int)( Xpos+radius* Math.sin(Math.toRadians(Angle+90))),(int)( Ypos+radius* Math.cos(Math.toRadians(Angle+90))));
+		g.setColor(Color.BLACK);
+		double[] distances = new double[12];
+		distances = sensor.GetDistances(Xpos, Ypos, Angle, radius);
+		for(int i=0; i<12;i++) {
+			double tempAngle = Angle +90+i*30;
+			if(tempAngle> 360) {
+				tempAngle = tempAngle-360;
+			}
+			double xText =0;
+			if(tempAngle-90 >90 &&tempAngle-90 <270) {
+				xText = (Xpos+(radius+20)* Math.sin(Math.toRadians(tempAngle)));
+			}
+			else {
+				xText = (Xpos+(radius+10)* Math.sin(Math.toRadians(tempAngle)));
+			}
+			double yText = (Ypos+(radius+15)* Math.cos(Math.toRadians(tempAngle)));
+		g.drawString(Integer.toString((int) distances[i]),(int) xText ,(int) yText);
+		}
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {

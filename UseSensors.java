@@ -1,21 +1,33 @@
 
 public class UseSensors {
-	
+	Sensor s;
+	boolean first = true;
 	public double[] GetDistances(double x, double y, double angle, int radius){
-		Sensor s = new Sensor(Math.toRadians(angle), radius,true);
-		s.updatePosition(x, y, Math.toRadians(0));
-		
+		if(first) {
+		s = new Sensor(Math.toRadians(angle), radius,true);
+		first = false;
+		}
+		//System.out.println(s.toString());
 		Walls w = new Walls();
 		int[][] walls = w.getWalls();
 		
 		
-		double[] distances = new double[walls.length];
-		
-		for(int i=0;i<walls.length;i++) {
-			distances[i]= s.getDistanceTo(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
-			System.out.println(distances[i]);
+		double[] distances = new double[12];
+		for(int z=0;z<12;z++) {
+			s.updatePosition(x, y, Math.toRadians(angle));
+			double distance = 9999;
+			for(int i=0;i<walls.length;i++) {
+			double temp = s.getDistanceTo(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
+				//System.out.println(distances[i]);
+				if(distance > temp) {
+					distance = temp;
+				}
+			}
+			angle = angle +30;
+			distances[z] = distance;
+			//System.out.println(distance);
 		}
-		return null;
+		return distances;
 		
 	}
 }
