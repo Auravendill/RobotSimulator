@@ -3,11 +3,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Line2D;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
@@ -16,7 +20,7 @@ import javax.swing.JPanel;
 public class Main extends JPanel implements KeyListener {
 	static double Vl =0;
 	static double Vr =0;
-	static double Angle =0;
+	static double Angle =180;
 	static double Xpos = 100;
 	static double Ypos =200;
 	static double deltaTime = 1;
@@ -38,12 +42,14 @@ public class Main extends JPanel implements KeyListener {
 
 		// need deltaTime........
 		Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
-
+		Walls w = new Walls();
+		int[][] walls = w.getWalls();
+		CircleIntersections intersect = new CircleIntersections();
 		// containing three elements: position x,y and angle
 
 
-		UseSensors sensor = new UseSensors();
-		sensor.GetDistances(Xpos, Ypos, Angle, radius);
+		//UseSensors sensor = new UseSensors();
+		//sensor.GetDistances(Xpos, Ypos, Angle, radius);
 		//Xpos = 150;
 		//Angle=0;
 		//frame.repaint();
@@ -60,13 +66,61 @@ public class Main extends JPanel implements KeyListener {
 
 			double[] NewPos = motion.motion();
 			//if(collision(NewPos[0], NewPos[1]) == false) {
+			boolean collision = false;
+			int colidedWall=-1;
+			int colisionCounter =0;
+			
+			for(int i=0; i<walls.length;i++) {
+				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),new Point(walls[i][2], walls[i][3]), new Point(NewPos[0], NewPos[1]), 15);
+				if(p.size()>0) {
+					
+					
+					
+					if((p.get(0).x >= Math.min(walls[i][0], walls[i][2]) &&p.get(0).x <= Math.max(walls[i][0], walls[i][2])) && (p.get(0).y >= Math.min(walls[i][1], walls[i][3]) &&p.get(0).y <= Math.max(walls[i][1], walls[i][3]))   ) {
+						collision = true;
+						colisionCounter++;
+						colidedWall = i;
 
+						//there is a collision
+						
+					}
+					if(p.size()>1 &&(p.get(1).x >= Math.min(walls[i][0], walls[i][2]) &&p.get(1).x <= Math.max(walls[i][0], walls[i][2])) && (p.get(1).y >= Math.min(walls[i][1], walls[i][3]) &&p.get(1).y <= Math.max(walls[i][1], walls[i][3]))   ) {
+						collision = true;
+						colisionCounter++;
+						colidedWall = i;
+
+						//there is a collision
+						
+					}
+						
+				}
+			}
+			if(collision == false) {
 			Xpos = NewPos[0];
 			
 			
 			Ypos = NewPos[1];
 			
 			Angle = Math.toDegrees(NewPos[2]);
+			}
+			else {
+				
+				if(colisionCounter== 2) {
+					if(walls[colidedWall][0]== walls[colidedWall][2] && colidedWall != -1) {//vertical wall
+						
+						Ypos = NewPos[1];
+						
+						Angle = Math.toDegrees(NewPos[2]);
+					}
+					else if (walls[colidedWall][1]== walls[colidedWall][3] && colidedWall != -1) {
+						Xpos = NewPos[0];
+						
+						Angle = Math.toDegrees(NewPos[2]);
+					}
+				}
+			}
+			
+			
 			if(Angle>=360) {
 				Angle =Angle - 360;
 			}
@@ -83,6 +137,9 @@ public class Main extends JPanel implements KeyListener {
 		}
 
 	}
+    
+
+
 	public void paint(Graphics g){
 
 		Walls w = new Walls();
