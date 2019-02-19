@@ -23,7 +23,7 @@ public class Main extends JPanel implements KeyListener {
 	static double Angle =0;
 	static double Xpos = 100;
 	static double Ypos =200;
-	static double deltaTime = 1;
+	static double deltaTime = 0.25;
 	static int radius = 15;//15 pixels
 	static boolean itterate = true;
 	UseSensors sensor = new UseSensors();
@@ -56,7 +56,7 @@ public class Main extends JPanel implements KeyListener {
 		
 		while(itterate) {
 			try {
-				TimeUnit.SECONDS.sleep(1);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
