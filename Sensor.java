@@ -43,13 +43,13 @@ public class Sensor {
 		double vx = endX - startX;
 		double vy = endY - startY;
 
-		double epsilon = 0.0000000001;
+		double epsilon = 0.00000000001;
 
 		if (offsetY == 0.0 && vy == 0.0) {
 			return Double.MAX_VALUE;
 		}
 
-		if (offsetX < epsilon && offsetX > -1.0 * epsilon) {
+		if (offsetX < epsilon && offsetX > (-1.0 * epsilon)) {
 			if (vx < epsilon && vx > -1.0 * epsilon) {
 				return Double.MAX_VALUE;
 			} else {
@@ -71,6 +71,9 @@ public class Sensor {
 					// wall is on the wrong side
 					return Double.MAX_VALUE;
 				}
+				double eOff = Math.sqrt(this.offsetX * this.offsetX + this.offsetY * this.offsetY); // euclidean length
+				double distance = eOff * lambda;
+				return distance;
 			}
 		}
 
