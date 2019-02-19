@@ -4,7 +4,7 @@ public class Motion {
     private double vLeft, vRight;
     private double deltaTime ;
 
-    private final double l = 3;
+    private final double l = 30;
     private final double vMax = 5;
 
 
