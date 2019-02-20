@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.StrictMath.exp;
+
 public class NeuralNetwork {
 	private double[] weights;
 
@@ -24,29 +26,54 @@ public class NeuralNetwork {
 		}
 	}
 
-	// private double getNode(int layer, int number) {
-	// switch (layer) {
-	// case 0:// inputLayer
-	// if (number < inputNodes) {
-	// return weights[number];
-	// } else {
-	// throw new ArrayIndexOutOfBoundsException();
-	// }
-	// case 1:// hiddenLayer
-	// if (number < inputNodes + hiddenNodes) {
-	// return weights[inputNodes + number];
-	// } else {
-	// throw new ArrayIndexOutOfBoundsException();
-	// }
-	// case 2:// outputLayer
-	// return weights[inputNodes + hiddenNodes + number];
-	// default:
-	// throw new ArrayIndexOutOfBoundsException();
-	// }
-	// }
+
+	public double sigmoid(double x){
+		return 1. / (1. + exp(-x));
+	}
 
 	public double[] getOutput(double[] inputs) {
-		return null;// placeholder
+
+		double[][] weightsLayer2 = new double[hiddenNodes][inputNodes];
+		double[][] weightsLayer3 = new double[outputNodes][hiddenNodes];
+
+		for (int i = 0; i < hiddenNodes; i ++){
+			for (int j = 0; j < inputNodes; j++) {
+				weightsLayer2[i][j] = weights[i*j+j];
+			}
+		}
+
+		for (int i = 0; i < outputNodes; i ++) {
+			for (int j = 0; j < hiddenNodes; j++) {
+				weightsLayer3[i][j] = weights[inputNodes * outputNodes + i * j + j];
+			}
+		}
+
+		double[] activationLayer2 = new double[hiddenNodes];
+		double[] activationLayer3 = new double[outputNodes];
+		double sum;
+
+		for (int i = 0; i < hiddenNodes; i++) {
+			sum = 0.;
+			for (int j = 0; j < inputNodes; j++) {
+				sum += inputs[j] * weightsLayer2[i][j];
+			}
+			activationLayer2[i] = sigmoid(sum);
+		}
+
+		for (int i = 0; i < outputNodes; i++) {
+			sum = 0.;
+			for (int j = 0; j < hiddenNodes; j++) {
+				sum += activationLayer2[j] * weightsLayer3[i][j];
+			}
+			activationLayer3[i] = sigmoid(sum);
+		}
+
+		double[] speed = new double[2];
+		for (int i = 0; i < outputNodes; i++) {
+			speed[i] = activationLayer3[i]*2* Main.MaxV;
+		}
+
+		return speed;// placeholder
 	}
 
 	public double[] getWeights() {
