@@ -11,7 +11,7 @@ public class NeuralNetwork {
 	double mutationChance = 0.02, radiation = 0.5;
 
 	public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes, boolean start) {
-		weights = new double[inputNodes + hiddenNodes + outputNodes];
+		weights = new double[inputNodes * hiddenNodes + outputNodes * hiddenNodes];
 		this.inputNodes = inputNodes;
 		this.hiddenNodes = hiddenNodes;
 		this.outputNodes = outputNodes;
@@ -24,26 +24,26 @@ public class NeuralNetwork {
 		}
 	}
 
-	private double getNode(int layer, int number) {
-		switch (layer) {
-		case 0:// inputLayer
-			if (number < inputNodes) {
-				return weights[number];
-			} else {
-				throw new ArrayIndexOutOfBoundsException();
-			}
-		case 1:// hiddenLayer
-			if (number < inputNodes + hiddenNodes) {
-				return weights[inputNodes + number];
-			} else {
-				throw new ArrayIndexOutOfBoundsException();
-			}
-		case 2:// outputLayer
-			return weights[inputNodes + hiddenNodes + number];
-		default:
-			throw new ArrayIndexOutOfBoundsException();
-		}
-	}
+	// private double getNode(int layer, int number) {
+	// switch (layer) {
+	// case 0:// inputLayer
+	// if (number < inputNodes) {
+	// return weights[number];
+	// } else {
+	// throw new ArrayIndexOutOfBoundsException();
+	// }
+	// case 1:// hiddenLayer
+	// if (number < inputNodes + hiddenNodes) {
+	// return weights[inputNodes + number];
+	// } else {
+	// throw new ArrayIndexOutOfBoundsException();
+	// }
+	// case 2:// outputLayer
+	// return weights[inputNodes + hiddenNodes + number];
+	// default:
+	// throw new ArrayIndexOutOfBoundsException();
+	// }
+	// }
 
 	public double[] getOutput(double[] inputs) {
 		return null;// placeholder
