@@ -111,6 +111,14 @@ public class NeuralNetwork {
 		return child;
 	}
 
+	private double[] arithmeticCrossover(double[] father, double[] mother) {
+		double[] child = new double[father.length];
+		for (int i = 0; i < child.length; ++i) {
+			child[i] = (father[i] + mother[i]) / 2.0;
+		}
+		return child;
+	}
+
 	private void mutate(double mutationChance, double radiation) {
 		for (int i = 0; i < weights.length; ++i) {
 			double rnd = Math.random();
