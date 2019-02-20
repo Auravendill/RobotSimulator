@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NeuralNetwork {
@@ -6,6 +7,8 @@ public class NeuralNetwork {
 	int inputNodes, hiddenNodes, outputNodes;
 
 	private static final double[] startValues = { -1.0, 1.0 };
+
+	double mutationChance = 0.02, radiation = 0.5;
 
 	public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes, boolean start) {
 		weights = new double[inputNodes + hiddenNodes + outputNodes];
@@ -54,9 +57,57 @@ public class NeuralNetwork {
 		this.weights = weights;
 	}
 
+	public double getMutationChance() {
+		return mutationChance;
+	}
+
+	public void setMutationChance(double mutationChance) {
+		this.mutationChance = mutationChance;
+	}
+
+	public double getRadiation() {
+		return radiation;
+	}
+
+	public void setRadiation(double radiation) {
+		this.radiation = radiation;
+	}
+
 	public NeuralNetwork getChild(NeuralNetwork parent) {
 		NeuralNetwork child = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, false);
+		double[] parentWeights = parent.getWeights();
+		for (int i = 0; i < weights.length; ++i) {
 
+		}
+		child.mutate(mutationChance, radiation);
+		return child;
+	}
+
+	private double[] kPointCrossover(double[] father, double[] mother, int k) {
+		double[] child = new double[father.length];
+		ArrayList<Integer> crossoverPoints = new ArrayList<Integer>();
+		for (int i = 0; i < k; ++i) {
+			int crossoverPoint;
+			do {
+				crossoverPoint = (int) ThreadLocalRandom.current().nextDouble(0, father.length);
+			} while (!crossoverPoints.contains(crossoverPoint));
+			crossoverPoints.add(crossoverPoint);
+		}
+		crossoverPoints.sort(null);
+		for (int i = 0; i <= k; ++i) {
+			if ((i & 1) == 0) {
+				int b = (i == 0) ? 0 : crossoverPoints.get(k - 1);
+				int e = (i == k) ? father.length : crossoverPoints.get(k);
+				for (int j = b; j < e; ++j) {
+					child[j] = father[j];
+				}
+			} else {
+				int e = (i == k) ? father.length : crossoverPoints.get(k);
+				for (int j = crossoverPoints.get(k - 1); j < e; ++j) {
+					child[j] = mother[j];
+				}
+			}
+		}
 		return child;
 	}
 
