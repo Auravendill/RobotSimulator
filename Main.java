@@ -27,7 +27,7 @@ public class Main extends JPanel implements KeyListener {
 	static double deltaTime = 0.125;
 	static int radius = 15;// 15 pixels
 	static boolean itterate = true;
-	UseSensors sensor = new UseSensors();
+	UseSensors sensor = new UseSensors(radius);
 
 	public static void main(String[] args) {
 
@@ -156,7 +156,7 @@ public class Main extends JPanel implements KeyListener {
 				(int) (Ypos + radius * Math.cos(Math.toRadians(Angle + 90))));
 		g.setColor(Color.BLACK);
 		double[] distances = new double[12];
-		distances = sensor.GetDistances(Xpos, Ypos, Angle, radius);
+		distances = sensor.GetDistances(Xpos, Ypos, Angle);
 		for (int i = 0; i < 12; i++) {
 			double tempAngle = Angle + 90 + i * 30;
 			if (tempAngle > 360) {
