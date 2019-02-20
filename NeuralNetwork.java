@@ -76,9 +76,8 @@ public class NeuralNetwork {
 	public NeuralNetwork getChild(NeuralNetwork parent) {
 		NeuralNetwork child = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, false);
 		double[] parentWeights = parent.getWeights();
-		for (int i = 0; i < weights.length; ++i) {
-
-		}
+		child.setWeights(kPointCrossover(weights, parentWeights, 2));
+		// child.setWeights(arithmeticCrossover(weights, parentWeights));//alternative
 		child.mutate(mutationChance, radiation);
 		return child;
 	}
