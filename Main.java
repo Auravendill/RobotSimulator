@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 //import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 //import java.awt.geom.Line2D;
 //import java.util.Arrays;
 //import java.util.Collections;
@@ -21,13 +22,18 @@ import javax.swing.JPanel;
 public class Main extends JPanel implements KeyListener {
 	static double Vl = 0;
 	static double Vr = 0;
+	static double MaxV = 15;
 	static double Angle = 0;
 	static double Xpos = 100;
 	static double Ypos = 200;
 	static double deltaTime = 0.125;
+	static double dustDensity = 10;
 	static int radius = 15;// 15 pixels
+	static int field = 0;
 	static boolean itterate = true;
+	static ArrayList<double[]> dust = new ArrayList<double[]>();
 	UseSensors sensor = new UseSensors(radius);
+	
 
 	public static void main(String[] args) {
 
@@ -45,7 +51,8 @@ public class Main extends JPanel implements KeyListener {
 		// need deltaTime........
 		Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 		Walls w = new Walls();
-		int[][] walls = w.getWalls();
+		int[][] walls = w.getWalls(field);
+		dust = w.getDust(field, dustDensity);
 		CircleIntersections intersect = new CircleIntersections();
 		// containing three elements: position x,y and angle
 
@@ -143,7 +150,7 @@ public class Main extends JPanel implements KeyListener {
 	public void paint(Graphics g) {
 
 		Walls w = new Walls();
-		int[][] walls = w.getWalls();
+		int[][] walls = w.getWalls(field);
 		for (int z = 0; z < walls.length; z++) {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
 		}
@@ -156,7 +163,8 @@ public class Main extends JPanel implements KeyListener {
 				(int) (Ypos + radius * Math.cos(Math.toRadians(Angle + 90))));
 		g.setColor(Color.BLACK);
 		double[] distances = new double[12];
-		distances = sensor.GetDistances(Xpos, Ypos, Angle);
+
+		distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
 		for (int i = 0; i < 12; i++) {
 			double tempAngle = Angle + 90 + i * 30;
 			if (tempAngle > 360) {
@@ -171,8 +179,28 @@ public class Main extends JPanel implements KeyListener {
 			double yText = (Ypos + (radius + 15) * Math.cos(Math.toRadians(tempAngle)));
 			g.drawString(Integer.toString((int) distances[i]), (int) xText, (int) yText);
 		}
+		RemoveDust();
+		for (int i = 0; i < dust.size(); i++) {
+			g.drawLine((int) dust.get(i)[0], (int) dust.get(i)[1], (int) dust.get(i)[0], (int) dust.get(i)[1]);
+		}
 	}
+	
+	private void RemoveDust() {
+		
+		ArrayList <Integer> remove= new ArrayList <Integer>();
+		for(int i=0; i<dust.size();i++) {
+			double dist = Math.sqrt((Xpos - dust.get(i)[0])*(Xpos - dust.get(i)[0]) + (Ypos - dust.get(i)[1])*(Ypos - dust.get(i)[1]));
+				    
+			if( dist <= radius) {
+				remove.add(i);				
+			}
+		}
+		for(int i=0; i<remove.size();i++) {
+			dust.remove(remove.get(i)-i);
+		}
+		
 
+	}
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -203,17 +231,17 @@ public class Main extends JPanel implements KeyListener {
 				Vr = Vr - 1;
 				Vl = Vl - 1;
 			}
-			if (Vr > 5) {
-				Vr = 5;
+			if (Vr > MaxV) {
+				Vr = MaxV;
 			}
-			if (Vl > 5) {
-				Vl = 5;
+			if (Vl > MaxV) {
+				Vl = MaxV;
 			}
-			if (Vr < -5) {
-				Vr = -5;
+			if (Vr < -MaxV) {
+				Vr = -MaxV;
 			}
-			if (Vl < -5) {
-				Vl = -5;
+			if (Vl < -MaxV) {
+				Vl = -MaxV;
 			}
 			System.out.println("Vl = " + Vl);
 			System.out.println("Vr = " + Vr);

@@ -4,8 +4,8 @@ public class Motion {
 	private double vLeft, vRight;
 	private double deltaTime;
 
-	private final double l = 30;
-	private final double vMax = 5;
+	private final double l = Main.radius*2;
+	private final double vMax = Main.MaxV;
 
 	public Motion(double x, double y, double theta, double vLeft, double vRight, double deltaTime) {
 		this.x = x;
