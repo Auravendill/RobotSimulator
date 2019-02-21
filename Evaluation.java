@@ -21,7 +21,8 @@ public class Evaluation {
 		double dustDensity = Main.dustDensity;
 		double TotalCollisions = 0;
 		double DustRemoved = 0;
-		double[] input = new double[14];
+		double DustRemovedLastStep = 0;
+		double[] input = new double[15];
 
 		Motion motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 		Walls w = new Walls();
@@ -32,7 +33,7 @@ public class Evaluation {
 		double TotalDust = dust.size();
 
 		Sensor s = new Sensor(Math.toRadians(angleStart), radius, true);
-		double angle = angleStart;
+		double angle = Angle;
 
 		for (int z = 0; z < runTime; z++) {
 			for (int q = 0; q < 12; q++) {
@@ -49,8 +50,10 @@ public class Evaluation {
 				input[q] = distance;
 
 			}
+			
 			input[12] = Vl;
 			input[13] = Vr;
+			input[14] = DustRemovedLastStep;
 			NNoutput = nn.getOutput(input);
 			Vl = NNoutput[0];
 			Vr = NNoutput[1];
@@ -116,8 +119,9 @@ public class Evaluation {
 					}
 				}
 			}
-
-			DustRemoved = DustRemoved + RemoveDust(Xpos, Ypos, radius);
+			double DustRemovedThisStep = RemoveDust(Xpos, Ypos, radius);
+			DustRemoved = DustRemoved + DustRemovedThisStep;
+			DustRemovedLastStep =DustRemovedThisStep;
 		}
 
 		double fitness = EvaluationFunction(TotalCollisions, DustRemoved, TotalDust, Alpha, Beta);
