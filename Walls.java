@@ -6,9 +6,12 @@ public class Walls {
 		int[][] walls0 = { { 50, 50, 50, 250 }, { 50, 50, 350, 50 }, { 300, 50, 300, 150 }, { 350, 50, 350, 250 },
 				{ 50, 250, 350, 250 }, { 100, 100, 250, 100 }, { 100, 100, 100, 150 }, { 250, 100, 250, 150 },
 				{ 100, 150, 250, 150 } }; // {x,y,x2,y2}
+		int[][] walls1 = { { 50, 50, 50, 250 }, { 50, 50, 350, 50 }, { 350, 50, 350, 250 }, { 50, 250, 350, 250 } }; // {x,y,x2,y2}
 
 		if (i == 0) {
 			return walls0;
+		} else if (i == 1) {
+			return walls1;
 		} else {
 			return null;
 		}
@@ -38,21 +41,19 @@ public class Walls {
 			}
 			if (walls[z][1] > maxY || walls[z][3] > maxY) {
 				maxY = Math.max(walls[z][1], walls[z][3]);
-			}	
+			}
 		}
 		for (double x = (minX + density / 2); x < maxX; x = x + density) {
 			for (double y = (minY + density / 2); y < maxY; y = y + density) {
-				if(i==0) {
-					if(x >= 100 && x<= 250 && y >= 100 && y<= 150) {
-						
-					}
-					else {
-						double[] dustParticle = {x,y};
+				if (i == 0) {
+					if (x >= 100 && x <= 250 && y >= 100 && y <= 150) {
+
+					} else {
+						double[] dustParticle = { x, y };
 						dust.add(dustParticle);
 					}
-				}
-				else {
-					double[] dustParticle = {x,y};
+				} else {
+					double[] dustParticle = { x, y };
 					dust.add(dustParticle);
 				}
 			}
