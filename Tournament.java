@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
-	public NeuralNetwork[] TournamentSelection(int tournamentSize, int runTime, int radius, NeuralNetwork[] nn) {
-		NeuralNetwork[] tournamentWinners = new NeuralNetwork[nn.length];
+	public NeuralNetwork[] TournamentSelection(int tournamentSize,int amountOfWinners, int runTime, int radius, NeuralNetwork[] nn) {
+		NeuralNetwork[] tournamentWinners = new NeuralNetwork[amountOfWinners];
 		int field = 0;
 		double[] fitness = new double[nn.length];
 		Evaluation e = new Evaluation();
@@ -62,7 +62,7 @@ public class Tournament {
 			fitness[i] = e.SimulateRun(nn[i], field, runTime, Xstart, Ystart, angleStart, radius);
 		}
 		
-		for(int i=0; i< nn.length;i++) {
+		for(int i=0; i< amountOfWinners;i++) {
 			double bestFitness = -1;
 			int bestEntrant = 0;
 			for(int z = 0;z<tournamentSize;z++) {
