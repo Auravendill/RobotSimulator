@@ -9,7 +9,7 @@ public class Evaluation {
 			double radius) {
 		double Vl = 0;
 		double Vr = 0;
-		double Alpha = 1;
+		double Alpha = 10;
 		double Beta = 1;
 		double Xpos = Xstart;
 		double Ypos = Ystart;
