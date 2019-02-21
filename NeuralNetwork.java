@@ -1,3 +1,5 @@
+import sun.applet.Main;
+
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -7,6 +9,11 @@ public class NeuralNetwork {
     private double[] weights;
 
     int inputNodes, hiddenNodes, outputNodes;
+
+    double speedMax = 15;
+    int population = 20;
+    int weightsSize = inputNodes * hiddenNodes + outputNodes * hiddenNodes;
+    public double[][] weightsPopulation = new double[population][weightsSize];
 
     private static final double[] startValues = { -1.0, 1.0 };
 
@@ -70,7 +77,7 @@ public class NeuralNetwork {
 
         double[] speed = new double[2];
         for (int i = 0; i < outputNodes; i++) {
-            speed[i] = activationLayer3[i]*2* Main.MaxV-Main.MaxV;
+            speed[i] = activationLayer3[i]*2* speedMax-speedMax;
         }
 
         return speed;// placeholder
@@ -107,6 +114,33 @@ public class NeuralNetwork {
         // child.setWeights(arithmeticCrossover(weights, parentWeights));//alternative
         child.mutate(mutationChance, radiation);
         return child;
+    }
+
+    public void populationGenerator(){
+        //int weightsSize = inputNodes * hiddenNodes + outputNodes * hiddenNodes;
+        // double[][] weightsPopulation = new double[population][weightsSize];
+        for (int i = 0; i < population; i++) {
+            for (int j = 0; j < weightsSize; j++) {
+                weightsPopulation[i][j] = Math.random();
+            }
+        }
+
+    }
+    public void uniformCrossover(){
+        int weightsSize = inputNodes * hiddenNodes + outputNodes * hiddenNodes;
+        int choice1, choice2;
+        double trans;
+
+        for (int i = 0; i < population; i++) {
+            choice1 = (int)(Math.random() * population);
+            choice2 = (int)(Math.random() * population);
+            for (int j = 0; j < weightsSize; ) {
+                trans = weightsPopulation[choice1][j];
+                weightsPopulation[choice1][j] = weightsPopulation[choice2][j];
+                weightsPopulation[choice2][j] = trans;
+                j = j+2;
+            }
+        }
     }
 
     private double[] kPointCrossover(double[] father, double[] mother, int k) {
