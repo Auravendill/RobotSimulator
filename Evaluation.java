@@ -6,10 +6,11 @@ public class Evaluation {
 	ArrayList<double[]> dust = new ArrayList<double[]>();
 	double Alpha = 10;
 	double Beta = 1;
-	double deltaTime = 0.5;
+	double deltaTime = 0.125;
 
 	public double SimulateRun(NeuralNetwork nn, int field, int runTime, double Xstart, double Ystart, double angleStart,
 			double radius) {
+		deltaTime = Main.deltaTime;
 		double Vl = 0;
 		double Vr = 0;
 
