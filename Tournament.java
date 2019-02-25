@@ -81,4 +81,13 @@ public class Tournament {
 	public double[] GetFitness() {
 		return fitnessThisGeneration;
 	}
+	public double GetBestFitness() {
+		double bestFitness = -99;
+		for(int i=0; i<fitnessThisGeneration.length;i++) {
+			if(fitnessThisGeneration[i]>bestFitness) {
+				bestFitness = fitnessThisGeneration[i];
+			}
+		}
+		return bestFitness;
+	}
 }
