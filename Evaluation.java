@@ -6,7 +6,7 @@ public class Evaluation {
 	ArrayList<double[]> dust = new ArrayList<double[]>();
 	double Alpha = 10;
 	double Beta = 1;
-	double deltaTime = 1;
+	double deltaTime = 0.5;
 
 	public double SimulateRun(NeuralNetwork nn, int field, int runTime, double Xstart, double Ystart, double angleStart,
 			double radius) {

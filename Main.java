@@ -50,13 +50,15 @@ public class Main extends JPanel implements KeyListener {
 
 	public static void main(String[] args) {
 		if (trainNN == true) {
-			for (int x = 0; x < 30; x++) {
-				NeuralNetwork[] nn = new NeuralNetwork[population];
-				Tournament selection = new Tournament();
-				for (int i = 0; i < population; i++) {
-					nn[i] = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
+			NeuralNetwork[] nn = new NeuralNetwork[population];
+			for (int i = 0; i < population; i++) {
+				nn[i] = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
 
-				}
+			}
+			for (int x = 0; x < 30; x++) {
+				
+				Tournament selection = new Tournament();
+				
 				NeuralNetwork[] winners = selection.TournamentSelection(tournamentSize, amountOfWinners, runTime,
 						radius, nn);
 				int z = 0;
@@ -86,7 +88,7 @@ public class Main extends JPanel implements KeyListener {
 					nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
 
 				}
-				System.out.println(selection.GetBestFitness());
+				System.out.println("best fitness in generation: "+ x+ " is: "+selection.GetBestFitness());
 			}
 		}
 		if (visualize == true) {
