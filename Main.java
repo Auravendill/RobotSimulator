@@ -24,15 +24,16 @@ public class Main extends JPanel implements KeyListener {
 	static double Vr = 0;
 	static double MaxV = 15;
 	static double Angle = 0;
-	static double Xpos = 100;
-	static double Ypos = 300;
+	static double Xpos = 200;
+	static double Ypos = 200;
 	static double deltaTime = 0.125;
 	static double dustDensity = 10;
 	static int radius = 15;// 15 pixels
 	static int field = 0;
+	
 	static boolean itterate = true;
 
-	static boolean visualize = false;
+	static boolean visualize = true;
 	static boolean useNN = false;
 	static boolean trainNN = true;
 
@@ -43,26 +44,33 @@ public class Main extends JPanel implements KeyListener {
 
 	static int tournamentSize = 7;
 	static int amountOfWinners = 5;
-	static int runTime = 200;
+	static int runTime = 2000;
+	
+	static int DustRemovedLastStep = 0;
 
 	static ArrayList<double[]> dust = new ArrayList<double[]>();
-	UseSensors sensor = new UseSensors(radius);
+	static UseSensors sensor = new UseSensors(radius);
 
 	public static void main(String[] args) {
+		int bestNN=0;
+		Tournament selection = new Tournament();
+		NeuralNetwork[] nn = new NeuralNetwork[population];
 		if (trainNN == true) {
-			NeuralNetwork[] nn = new NeuralNetwork[population];
+			
 			for (int i = 0; i < population; i++) {
 				nn[i] = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
 
 			}
-			for (int x = 0; x < 30; x++) {
+			for (int x = 0; x < 100; x++) {
 				
-				Tournament selection = new Tournament();
+				
 				
 				NeuralNetwork[] winners = selection.TournamentSelection(tournamentSize, amountOfWinners, runTime,
 						radius, nn);
+				
 				int z = 0;
 				for (int i = 0; i < population; i++) {
+					
 					if (i < amountOfWinners) {
 						nn[i] = winners[i];
 					} else {
@@ -84,12 +92,13 @@ public class Main extends JPanel implements KeyListener {
 						}
 					}
 				}
-				for (int i = 0; i < amountOfWinners; i++) {
-					nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
-
-				}
+				//for (int i = 1; i < amountOfWinners; i++) {
+				//	nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
+				//}
 				System.out.println("best fitness in generation: "+ x+ " is: "+selection.GetBestFitness());
 			}
+			bestNN = selection.GetBestNN();
+			
 		}
 		if (visualize == true) {
 			JFrame frame = new JFrame("Robot Controller");
@@ -116,15 +125,30 @@ public class Main extends JPanel implements KeyListener {
 			// frame.repaint();
 
 			while (itterate) {
+				
 				try {
 					Thread.sleep((int) (1000 * deltaTime));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				if(trainNN == false) {
 				// System.out.println(Xpos);
 				motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
-
+				}
+				else {
+					double [] distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
+					double[] input = new double[15];
+					for(int i=0;i<distances.length;i++) {
+						input[i] = distances[i];
+					}
+					input[12] = Vl;
+					input[13] = Vr;
+					input[14] = DustRemovedLastStep;
+					double[] Vnn = nn[bestNN].getOutput(input);
+					
+					motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vnn[0], Vnn[1], deltaTime);
+				}
 				double[] NewPos = motion.motion();
 				// if(collision(NewPos[0], NewPos[1]) == false) {
 				boolean collision = false;
@@ -237,7 +261,7 @@ public class Main extends JPanel implements KeyListener {
 	}
 
 	private void RemoveDust() {
-
+		DustRemovedLastStep =0;
 		ArrayList<Integer> remove = new ArrayList<Integer>();
 		for (int i = 0; i < dust.size(); i++) {
 			double dist = Math.sqrt((Xpos - dust.get(i)[0]) * (Xpos - dust.get(i)[0])
@@ -249,6 +273,7 @@ public class Main extends JPanel implements KeyListener {
 		}
 		for (int i = 0; i < remove.size(); i++) {
 			dust.remove(remove.get(i) - i);
+			DustRemovedLastStep++;
 		}
 
 	}

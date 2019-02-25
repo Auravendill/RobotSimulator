@@ -34,14 +34,14 @@ public class Tournament {
 				maxY = Math.max(walls[z][1], walls[z][3]);
 			}
 		}
-		double Xstart = 0;
-		double Ystart = 0;
+		double Xstart = 200;
+		double Ystart = 200;
 		double angleStart = 0;
 		boolean collision = true;
 		while(collision) {
-			Xstart = Math.random()*(maxX-minX - radius-1)+ minX+radius+1;
-			Ystart = Math.random()*(maxY-minY - radius-1)+ minY+radius+1;
-			angleStart = Math.random()*359;
+			//Xstart = Math.random()*(maxX-minX - radius-1)+ minX+radius+1;
+			//Ystart = Math.random()*(maxY-minY - radius-1)+ minY+radius+1;
+			//angleStart = Math.random()*359;
 			int collisions =0;
 			for (int i = 0; i < walls.length; i++) {
 				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
@@ -63,9 +63,20 @@ public class Tournament {
 			fitness[i] = e.SimulateRun(nn[i], field, runTime, Xstart, Ystart, angleStart, radius);
 		}
 		fitnessThisGeneration = fitness;
-		for(int i=0; i< amountOfWinners;i++) {
-			double bestFitness = -1;
-			int bestEntrant = 0;
+		double bestFitness = -99;
+		int bestEntrant = 0;
+		for(int i=0; i< nn.length;i++) {
+			
+			if(bestFitness< fitness[i]) {
+				bestFitness= fitness[i];
+				bestEntrant = i;
+			}
+		}
+		tournamentWinners[0]= nn[bestEntrant];
+		
+		for(int i=1; i< amountOfWinners;i++) {
+			bestFitness = -99;
+			bestEntrant = 0;
 			for(int z = 0;z<tournamentSize;z++) {
 				int tournamentEntrant = (int) (Math.random()*nn.length);
 				if(bestFitness< fitness[tournamentEntrant]) {
@@ -89,5 +100,16 @@ public class Tournament {
 			}
 		}
 		return bestFitness;
+	}
+	public int GetBestNN() {
+		double bestFitness = -99;
+		int bestEntrant = 0;
+		for(int i=0; i<fitnessThisGeneration.length;i++) {
+			if(fitnessThisGeneration[i]>bestFitness) {
+				bestFitness = fitnessThisGeneration[i];
+				bestEntrant = i;
+			}
+		}
+		return bestEntrant;
 	}
 }
