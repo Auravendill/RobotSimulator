@@ -37,14 +37,14 @@ public class Main extends JPanel implements KeyListener {
 	static boolean useNN = false;
 	static boolean trainNN = true;
 
-	static int population = 20;
+	static int population = 30;
 	static int inputNodes = 15;
 	static int hiddenNodes = 10;
 	static int outputNodes = 2;
 
 	static int tournamentSize = 7;
-	static int amountOfWinners = 5;
-	static int runTime = 2000;
+	static int amountOfWinners = 10;
+	static int runTime = 5000;
 	
 	static int DustRemovedLastStep = 0;
 
@@ -146,7 +146,14 @@ public class Main extends JPanel implements KeyListener {
 					input[13] = Vr;
 					input[14] = DustRemovedLastStep;
 					double[] Vnn = nn[bestNN].getOutput(input);
-					
+					Vl = Vnn[0];
+					Vr = Vnn[1];
+					if(Vl <0.0000001 && Vl > -0.0000001) {
+						Vl = 0;
+					}
+					if(Vr <0.0000001 && Vr > -0.0000001) {
+						Vr = 0;
+					}
 					motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vnn[0], Vnn[1], deltaTime);
 				}
 				double[] NewPos = motion.motion();

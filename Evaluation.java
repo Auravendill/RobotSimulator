@@ -58,7 +58,13 @@ public class Evaluation {
 			NNoutput = nn.getOutput(input);
 			Vl = NNoutput[0];
 			Vr = NNoutput[1];
-
+			
+			if(Vl <0.0000001 && Vl > -0.0000001) {
+				Vl = 0;
+			}
+			if(Vr <0.0000001 && Vr > -0.0000001) {
+				Vr = 0;
+			}
 			motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 
 			double[] NewPos = motion.motion();
