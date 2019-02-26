@@ -12,13 +12,13 @@ public class NeuralNetwork {
 	int inputNodes, hiddenNodes, outputNodes;
 
 	double speedMax = 15;
-//	int population = 20;
+	// int population = 20;
 	int weightsSize = inputNodes * hiddenNodes + outputNodes * hiddenNodes;
-//	public double[][] weightsPopulation = new double[population][weightsSize];
+	// public double[][] weightsPopulation = new double[population][weightsSize];
 
-	private static final double[] startValues = { -1.0, 1.0 };
+	private static final double[] startValues = { -7.0, 7.0 };
 
-	double mutationChance = 0.02, radiation = 0.5;
+	double mutationChance = 0.1, radiation = 5;
 
 	public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes, boolean start) {
 		weights = new double[inputNodes * hiddenNodes + outputNodes * hiddenNodes];
@@ -110,8 +110,9 @@ public class NeuralNetwork {
 	public NeuralNetwork getChild(NeuralNetwork parent) {
 		NeuralNetwork child = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, false);
 		double[] parentWeights = parent.getWeights();
+		child.setWeights(twoPointCrossover(weights, parentWeights));
 		// child.setWeights(kPointCrossover(weights, parentWeights, 2));
-		child.setWeights(arithmeticCrossover(weights, parentWeights));// alternative
+		// child.setWeights(arithmeticCrossover(weights, parentWeights));// alternative
 		child.mutate(mutationChance, radiation);
 		return child;
 	}
@@ -143,6 +144,18 @@ public class NeuralNetwork {
 	// }
 	// }
 	// }
+
+	private double[] twoPointCrossover(double[] father, double[] mother) {
+		double[] child = new double[father.length];
+		int crossoverPoint = (int) ThreadLocalRandom.current().nextDouble(0, father.length);
+		for (int i = 0; i < crossoverPoint; ++i) {
+			child[i] = father[i];
+		}
+		for (int j = crossoverPoint; j < father.length; ++j) {
+			child[j] = mother[j];
+		}
+		return child;
+	}
 
 	private double[] kPointCrossover(double[] father, double[] mother, int k) {
 		double[] child = new double[father.length];

@@ -4,7 +4,7 @@ import java.util.List;
 public class Evaluation {
 
 	ArrayList<double[]> dust = new ArrayList<double[]>();
-	double Alpha = 10;
+	double Alpha = 15;
 	double Beta = 1;
 	double deltaTime = 0.125;
 
