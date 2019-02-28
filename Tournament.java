@@ -41,10 +41,10 @@ public class Tournament {
 		while(collision) {
 			//Xstart = Math.random()*(maxX-minX - radius-1)+ minX+radius+1;
 			//Ystart = Math.random()*(maxY-minY - radius-1)+ minY+radius+1;
-			//angleStart = Math.random()*359;
+			//angleStart = (int) (Math.random()*359);
 			int collisions =0;
 			for (int i = 0; i < walls.length; i++) {
-				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
+				List<Point> p = CircleIntersections.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
 						new Point(walls[i][2], walls[i][3]), new Point(Xstart, Ystart), radius);
 				if(p.size() > 0) {
 					collisions++;
@@ -54,7 +54,7 @@ public class Tournament {
 				collision = false;
 			}
 			if (field == 0) {
-				if (Xstart >= 100 && Xstart <= 250 && Ystart >= 100 && Ystart <= 150) {
+				if (Xstart >= 100-radius && Xstart <= 250+radius && Ystart >= 100-radius && Ystart <= 150+radius) {
 					collision = true;
 				}
 			}
@@ -85,7 +85,9 @@ public class Tournament {
 				}
 			}
 			 tournamentWinners[i]= nn[bestEntrant];
+			 
 		}
+
 		return tournamentWinners;
 		
 	}

@@ -30,47 +30,45 @@ public class Main extends JPanel implements KeyListener {
 	static double dustDensity = 10;
 	static int radius = 15;// 15 pixels
 	static int field = 0;
-	
+	static int DustRemoved=0;
+
 	static boolean itterate = true;
 
 	static boolean visualize = true;
 	static boolean useNN = false;
 	static boolean trainNN = true;
 
-	static int population = 30;
+	static int population = 40;
 	static int inputNodes = 15;
-	static int hiddenNodes = 10;
+	static int hiddenNodes = 12;
 	static int outputNodes = 2;
 
-	static int tournamentSize = 7;
-	static int amountOfWinners = 10;
-	static int runTime = 5000;
-	
+	static int tournamentSize = 5;
+	static int amountOfWinners = 15;
+	static int runTime = 1000;
+
 	static int DustRemovedLastStep = 0;
 
 	static ArrayList<double[]> dust = new ArrayList<double[]>();
 	static UseSensors sensor = new UseSensors(radius);
 
 	public static void main(String[] args) {
-		int bestNN=0;
+		int bestNN = 0;
 		Tournament selection = new Tournament();
 		NeuralNetwork[] nn = new NeuralNetwork[population];
+		NeuralNetwork BestNN = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
 		if (trainNN == true) {
-			
 			for (int i = 0; i < population; i++) {
 				nn[i] = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
-
 			}
-			for (int x = 0; x < 100; x++) {
-				
-				
-				
+			for (int x = 0; x < 500; x++) {
+
 				NeuralNetwork[] winners = selection.TournamentSelection(tournamentSize, amountOfWinners, runTime,
 						radius, nn);
-				
+				BestNN = winners[0];
 				int z = 0;
 				for (int i = 0; i < population; i++) {
-					
+
 					if (i < amountOfWinners) {
 						nn[i] = winners[i];
 					} else {
@@ -92,13 +90,13 @@ public class Main extends JPanel implements KeyListener {
 						}
 					}
 				}
-				//for (int i = 1; i < amountOfWinners; i++) {
-				//	nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
-				//}
-				System.out.println("best fitness in generation: "+ x+ " is: "+selection.GetBestFitness());
+				// for (int i = 1; i < amountOfWinners; i++) {
+				// nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
+				// }
+				System.out.println("best fitness in generation: " + x + " is: " + selection.GetBestFitness());
 			}
 			bestNN = selection.GetBestNN();
-			
+
 		}
 		if (visualize == true) {
 			JFrame frame = new JFrame("Robot Controller");
@@ -123,7 +121,7 @@ public class Main extends JPanel implements KeyListener {
 			// Xpos = 150;
 			// Angle=0;
 			// frame.repaint();
-
+			
 			while (itterate) {
 				
 				try {
@@ -132,90 +130,160 @@ public class Main extends JPanel implements KeyListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if(trainNN == false) {
-				// System.out.println(Xpos);
-				motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
-				}
-				else {
-					double [] distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
-					double[] input = new double[15];
-					for(int i=0;i<distances.length;i++) {
-						input[i] = distances[i];
-					}
-					input[12] = Vl;
-					input[13] = Vr;
-					input[14] = DustRemovedLastStep;
-					double[] Vnn = nn[bestNN].getOutput(input);
-					Vl = Vnn[0];
-					Vr = Vnn[1];
-					if(Vl <0.0000001 && Vl > -0.0000001) {
-						Vl = 0;
-					}
-					if(Vr <0.0000001 && Vr > -0.0000001) {
-						Vr = 0;
-					}
-					motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vnn[0], Vnn[1], deltaTime);
-				}
-				double[] NewPos = motion.motion();
-				// if(collision(NewPos[0], NewPos[1]) == false) {
-				boolean collision = false;
-				int colidedWall = -1;
-				int colisionCounter = 0;
-
-				for (int i = 0; i < walls.length; i++) {
-					List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
-							new Point(walls[i][2], walls[i][3]), new Point(NewPos[0], NewPos[1]), radius);
-					if (p.size() > 0) {
-
-						if ((p.get(0).x >= Math.min(walls[i][0], walls[i][2])
-								&& p.get(0).x <= Math.max(walls[i][0], walls[i][2]))
-								&& (p.get(0).y >= Math.min(walls[i][1], walls[i][3])
-										&& p.get(0).y <= Math.max(walls[i][1], walls[i][3]))) {
-							collision = true;
-							colisionCounter++;
-							colidedWall = i;
-
-							// there is a collision
-
-						}
-						if (p.size() > 1
-								&& (p.get(1).x >= Math.min(walls[i][0], walls[i][2])
-										&& p.get(1).x <= Math.max(walls[i][0], walls[i][2]))
-								&& (p.get(1).y >= Math.min(walls[i][1], walls[i][3])
-										&& p.get(1).y <= Math.max(walls[i][1], walls[i][3]))) {
-							collision = true;
-							colisionCounter++;
-							colidedWall = i;
-
-							// there is a collision
-
-						}
-
-					}
-				}
-				if (collision == false) {
-					Xpos = NewPos[0];
-
-					Ypos = NewPos[1];
-
-					Angle = Math.toDegrees(NewPos[2]);
-
+				if (trainNN == false) {
+					// System.out.println(Xpos);
+					motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 				} else {
+					double[] input = new double[15];
+					double[] NNoutput;
+					double TotalDust = dust.size();
 
-					if (colisionCounter == 2) {
-						if (walls[colidedWall][0] == walls[colidedWall][2] && colidedWall != -1) {// vertical wall
+					double [] distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
+					
+
+					
+						for (int q = 0; q < 12; q++) {
+							
+							input[q] = distances[q];
+
+						}
+
+						input[12] = Vl;
+						input[13] = Vr;
+						input[14] = DustRemovedLastStep;
+												
+						NNoutput = BestNN.getOutput(input);
+						Vl = NNoutput[0];
+						Vr = NNoutput[1];
+						
+						motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
+
+						double[] NewPos = motion.motion();
+						
+						boolean collision = false;
+						int colidedWall = -1;
+						int colisionCounter = 0;
+
+						for (int i = 0; i < walls.length; i++) {
+							List<Point> p = CircleIntersections.getCircleLineIntersectionPoint(
+									new Point(walls[i][0], walls[i][1]), new Point(walls[i][2], walls[i][3]),
+									new Point(NewPos[0], NewPos[1]), radius);
+							if (p.size() > 0) {
+
+								if ((p.get(0).x >= Math.min(walls[i][0], walls[i][2])
+										&& p.get(0).x <= Math.max(walls[i][0], walls[i][2]))
+										&& (p.get(0).y >= Math.min(walls[i][1], walls[i][3])
+												&& p.get(0).y <= Math.max(walls[i][1], walls[i][3]))) {
+									collision = true;
+									colisionCounter++;
+									colidedWall = i;
+
+									// there is a collision
+
+								}
+								if (p.size() > 1
+										&& (p.get(1).x >= Math.min(walls[i][0], walls[i][2])
+												&& p.get(1).x <= Math.max(walls[i][0], walls[i][2]))
+										&& (p.get(1).y >= Math.min(walls[i][1], walls[i][3])
+												&& p.get(1).y <= Math.max(walls[i][1], walls[i][3]))) {
+									collision = true;
+									colisionCounter++;
+									colidedWall = i;
+
+									// there is a collision
+
+								}
+
+							}
+						}
+						if (collision == false) {
+							Xpos = NewPos[0];
 
 							Ypos = NewPos[1];
 
 							Angle = Math.toDegrees(NewPos[2]);
-						} else if (walls[colidedWall][1] == walls[colidedWall][3] && colidedWall != -1) {
-							Xpos = NewPos[0];
 
-							Angle = Math.toDegrees(NewPos[2]);
+						} else {
+
+							if (colisionCounter == 2) {
+								if (walls[colidedWall][0] == walls[colidedWall][2] && colidedWall != -1) {// vertical
+																											// wall
+
+									Ypos = NewPos[1];
+
+									Angle = Math.toDegrees(NewPos[2]);
+								} else if (walls[colidedWall][1] == walls[colidedWall][3] && colidedWall != -1) {
+									Xpos = NewPos[0];
+
+									Angle = Math.toDegrees(NewPos[2]);
+								}
+							}
+						}
+
+					
+				}
+				if (trainNN == false) {
+					double[] NewPos = motion.motion();
+
+					boolean collision = false;
+					int colidedWall = -1;
+					int colisionCounter = 0;
+
+					for (int i = 0; i < walls.length; i++) {
+						List<Point> p = CircleIntersections.getCircleLineIntersectionPoint(
+								new Point(walls[i][0], walls[i][1]), new Point(walls[i][2], walls[i][3]),
+								new Point(NewPos[0], NewPos[1]), radius);
+						if (p.size() > 0) {
+
+							if ((p.get(0).x >= Math.min(walls[i][0], walls[i][2])
+									&& p.get(0).x <= Math.max(walls[i][0], walls[i][2]))
+									&& (p.get(0).y >= Math.min(walls[i][1], walls[i][3])
+											&& p.get(0).y <= Math.max(walls[i][1], walls[i][3]))) {
+								collision = true;
+								colisionCounter++;
+								colidedWall = i;
+
+								// there is a collision
+
+							}
+							if (p.size() > 1
+									&& (p.get(1).x >= Math.min(walls[i][0], walls[i][2])
+											&& p.get(1).x <= Math.max(walls[i][0], walls[i][2]))
+									&& (p.get(1).y >= Math.min(walls[i][1], walls[i][3])
+											&& p.get(1).y <= Math.max(walls[i][1], walls[i][3]))) {
+								collision = true;
+								colisionCounter++;
+								colidedWall = i;
+
+								// there is a collision
+
+							}
+
+						}
+					}
+					if (collision == false) {
+						Xpos = NewPos[0];
+
+						Ypos = NewPos[1];
+
+						Angle = Math.toDegrees(NewPos[2]);
+
+					} else {
+
+						if (colisionCounter == 2) {
+							if (walls[colidedWall][0] == walls[colidedWall][2] && colidedWall != -1) {// vertical wall
+
+								Ypos = NewPos[1];
+
+								Angle = Math.toDegrees(NewPos[2]);
+							} else if (walls[colidedWall][1] == walls[colidedWall][3] && colidedWall != -1) {
+								Xpos = NewPos[0];
+
+								Angle = Math.toDegrees(NewPos[2]);
+							}
 						}
 					}
 				}
-
 				if (Angle >= 360) {
 					Angle = Angle - 360;
 				}
@@ -244,22 +312,24 @@ public class Main extends JPanel implements KeyListener {
 		g.drawLine((int) Xpos, (int) Ypos, (int) (Xpos + radius * Math.sin(Math.toRadians(Angle + 90))),
 				(int) (Ypos + radius * Math.cos(Math.toRadians(Angle + 90))));
 		g.setColor(Color.BLACK);
-		double[] distances = new double[12];
+		if (trainNN == false) {
+			double[] distances = new double[12];
 
-		distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
-		for (int i = 0; i < 12; i++) {
-			double tempAngle = Angle + 90 + i * 30;
-			if (tempAngle > 360) {
-				tempAngle = tempAngle - 360;
+			distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
+			for (int i = 0; i < 12; i++) {
+				double tempAngle = Angle + 90 + i * 30;
+				if (tempAngle > 360) {
+					tempAngle = tempAngle - 360;
+				}
+				double xText = 0;
+				if (tempAngle - 90 > 90 && tempAngle - 90 < 270) {
+					xText = (Xpos + (radius + 20) * Math.sin(Math.toRadians(tempAngle)));
+				} else {
+					xText = (Xpos + (radius + 10) * Math.sin(Math.toRadians(tempAngle)));
+				}
+				double yText = (Ypos + (radius + 15) * Math.cos(Math.toRadians(tempAngle)));
+				g.drawString(Integer.toString((int) distances[i]), (int) xText, (int) yText);
 			}
-			double xText = 0;
-			if (tempAngle - 90 > 90 && tempAngle - 90 < 270) {
-				xText = (Xpos + (radius + 20) * Math.sin(Math.toRadians(tempAngle)));
-			} else {
-				xText = (Xpos + (radius + 10) * Math.sin(Math.toRadians(tempAngle)));
-			}
-			double yText = (Ypos + (radius + 15) * Math.cos(Math.toRadians(tempAngle)));
-			g.drawString(Integer.toString((int) distances[i]), (int) xText, (int) yText);
 		}
 		RemoveDust();
 		for (int i = 0; i < dust.size(); i++) {
@@ -268,7 +338,8 @@ public class Main extends JPanel implements KeyListener {
 	}
 
 	private void RemoveDust() {
-		DustRemovedLastStep =0;
+		DustRemovedLastStep = 0;
+		
 		ArrayList<Integer> remove = new ArrayList<Integer>();
 		for (int i = 0; i < dust.size(); i++) {
 			double dist = Math.sqrt((Xpos - dust.get(i)[0]) * (Xpos - dust.get(i)[0])
@@ -276,6 +347,7 @@ public class Main extends JPanel implements KeyListener {
 
 			if (dist <= radius) {
 				remove.add(i);
+				DustRemoved++;
 			}
 		}
 		for (int i = 0; i < remove.size(); i++) {

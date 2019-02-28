@@ -3,13 +3,13 @@ import java.util.List;
 
 public class Evaluation {
 
-	ArrayList<double[]> dust = new ArrayList<double[]>();
-	double Alpha = 15;
-	double Beta = 1;
-	double deltaTime = 0.125;
+	static ArrayList<double[]> dust = new ArrayList<double[]>();
+	static double Alpha = 10;
+	static double Beta = 1;
+	static double deltaTime = 0.125;
 
-	public double SimulateRun(NeuralNetwork nn, int field, int runTime, double Xstart, double Ystart, double angleStart,
-			double radius) {
+	public static double SimulateRun(NeuralNetwork nn, int field, int runTime, double Xstart, double Ystart, double angleStart,
+			int radius) {
 		deltaTime = Main.deltaTime;
 		double Vl = 0;
 		double Vr = 0;
@@ -35,36 +35,24 @@ public class Evaluation {
 
 		Sensor s = new Sensor(Math.toRadians(angleStart), radius, true);
 		double angle = Angle;
-
+		UseSensors sensor = new UseSensors(radius);
 		for (int z = 0; z < runTime; z++) {
+			double [] distances = sensor.GetDistances(Xpos, Ypos, Angle, field, radius);
 			for (int q = 0; q < 12; q++) {
-				s.updatePosition(Xpos, Ypos, Math.toRadians(angle));
-				double distance = 9999;
-				for (int i = 0; i < walls.length; i++) {
-					double temp = s.getDistanceTo(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
-
-					if (distance > temp) {
-						distance = temp;
-					}
-				}
-				angle = angle + 30;
-				input[q] = distance;
+				
+				input[q] = distances[q];
 
 			}
 			
 			input[12] = Vl;
 			input[13] = Vr;
 			input[14] = DustRemovedLastStep;
+			
 			NNoutput = nn.getOutput(input);
 			Vl = NNoutput[0];
 			Vr = NNoutput[1];
 			
-			if(Vl <0.0000001 && Vl > -0.0000001) {
-				Vl = 0;
-			}
-			if(Vr <0.0000001 && Vr > -0.0000001) {
-				Vr = 0;
-			}
+		
 			motion = new Motion(Xpos, Ypos, Math.toRadians(Angle), Vl, Vr, deltaTime);
 
 			double[] NewPos = motion.motion();
@@ -74,7 +62,7 @@ public class Evaluation {
 			int colisionCounter = 0;
 
 			for (int i = 0; i < walls.length; i++) {
-				List<Point> p = intersect.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
+				List<Point> p = CircleIntersections.getCircleLineIntersectionPoint(new Point(walls[i][0], walls[i][1]),
 						new Point(walls[i][2], walls[i][3]), new Point(NewPos[0], NewPos[1]), radius);
 				if (p.size() > 0) {
 
@@ -130,23 +118,24 @@ public class Evaluation {
 			DustRemoved = DustRemoved + DustRemovedThisStep;
 			DustRemovedLastStep =DustRemovedThisStep;
 		}
-
+		
 		double fitness = EvaluationFunction(TotalCollisions, DustRemoved, TotalDust, Alpha, Beta);
 		return fitness;
 
 	}
 
-	private double EvaluationFunction(double totalCollisions, double dustRemoved, double totalDust, double alpha,
+	private static double EvaluationFunction(double totalCollisions, double dustRemoved, double totalDust, double alpha,
 			double beta) {
 		if (totalCollisions > 0) { // can't feed 0 into a log function
 			return alpha * (dustRemoved / totalDust) - beta * Math.log(totalCollisions);
 		} else {
 			return alpha * (dustRemoved / totalDust);
 		}
+		
 	}
 
-	private double RemoveDust(double xpos, double ypos, double radius) {
-		double dustRemoved = 0;
+	private static double RemoveDust(double xpos, double ypos, double radius) {
+		
 		ArrayList<Integer> remove = new ArrayList<Integer>();
 		for (int i = 0; i < dust.size(); i++) {
 			double dist = Math.sqrt((xpos - dust.get(i)[0]) * (xpos - dust.get(i)[0])
@@ -154,13 +143,13 @@ public class Evaluation {
 
 			if (dist <= radius) {
 				remove.add(i);
-				dustRemoved++;
+				
 			}
 		}
 		for (int i = 0; i < remove.size(); i++) {
 			dust.remove(remove.get(i) - i);
 		}
-		return dustRemoved;
+		return remove.size();
 
 	}
 }
