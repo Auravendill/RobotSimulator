@@ -1,10 +1,11 @@
 
 //import java.awt.BorderLayout;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 //import java.awt.Graphics2D;
-
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 //import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -38,6 +39,7 @@ public class Main extends JPanel implements KeyListener {
 	static boolean useNN = false;
 	static boolean trainNN = true;
 
+	static int generations = 100;
 	static int population = 40;
 	static int inputNodes = 15;
 	static int hiddenNodes = 12;
@@ -46,7 +48,16 @@ public class Main extends JPanel implements KeyListener {
 	static int tournamentSize = 5;
 	static int amountOfWinners = 15;
 	static int runTime = 1000;
-
+	static String AVfitness="";
+	static String SError="";
+	static String MaxFitness="";
+	
+	static String Deviations="";
+	
+	static double[] standardDeviation = new double[generations];
+	static double[] standardError = new double[generations];
+	static double[] deviation = new double[generations];
+	
 	static int DustRemovedLastStep = 0;
 
 	static ArrayList<double[]> dust = new ArrayList<double[]>();
@@ -61,8 +72,8 @@ public class Main extends JPanel implements KeyListener {
 			for (int i = 0; i < population; i++) {
 				nn[i] = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, true);
 			}
-			for (int x = 0; x < 500; x++) {
-
+			for (int x = 0; x < generations; x++) {
+				deviation[x] = getDeviation(nn);
 				NeuralNetwork[] winners = selection.TournamentSelection(tournamentSize, amountOfWinners, runTime,
 						radius, nn);
 				BestNN = winners[0];
@@ -93,12 +104,36 @@ public class Main extends JPanel implements KeyListener {
 				// for (int i = 1; i < amountOfWinners; i++) {
 				// nn[i].mutate(nn[i].mutationChance, nn[i].radiation);
 				// }
+				double[] fitness = selection.GetFitness();
+				double average =0;
+				for(int w=0; w<fitness.length;w++ ) {
+					average = average+fitness[w];
+				}
+				average = average/ fitness.length;
 				System.out.println("best fitness in generation: " + x + " is: " + selection.GetBestFitness());
+				System.out.println("average fitness in generation: " + x + " is: " + average);
+				AVfitness = AVfitness +", "+average;
+				
+				MaxFitness = MaxFitness +", "+selection.GetBestFitness();
+				
+				Deviations = Deviations +", "+deviation[x];
+				double temp =0;
+				for(int w=0; w<fitness.length;w++ ) {
+					temp = temp+((fitness[w]-average)*(fitness[w]-average));
+				}
+				standardDeviation[x]= Math.sqrt(temp/(population-1));
+				standardError[x] = standardDeviation[x]/Math.sqrt(population);
+				SError = SError +", "+standardError[x];
 			}
 			bestNN = selection.GetBestNN();
 
 		}
 		if (visualize == true) {
+			System.out.println("MaxFitness was: "+ MaxFitness);			
+			System.out.println("average fitness was: "+ AVfitness);
+			System.out.println("standard error was: "+ SError);
+			System.out.println("deviation was: "+ Deviations);
+			
 			JFrame frame = new JFrame("Robot Controller");
 			frame.getContentPane().add(new Main());
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -296,7 +331,34 @@ public class Main extends JPanel implements KeyListener {
 			}
 		}
 	}
-
+	private static double getDeviation(NeuralNetwork[] nn) {
+		double deviation =0;
+		double[] weights1;
+		double[] weights2;
+		double distance = 0;
+		for(int x=0;x<nn.length;x++) {
+			weights1 = nn[x].getWeights();
+			for(int z=0;z<nn.length;z++) {
+				if(z!=x) {
+					weights2 = nn[z].getWeights();
+					for(int w=0;w<weights1.length;w++) {
+						if(weights1[w] >= 0 && weights2[w] >= 0) {
+							distance = Math.max(weights1[w],weights2[w])-Math.min(weights1[w],weights2[w]);
+						}
+						else if (weights1[w] < 0 && weights2[w] < 0) {
+							distance = -1*(weights1[w]+weights2[w]);
+						}
+						else {
+							distance = Math.max(weights1[w],weights2[w])+(-1*Math.min(weights1[w],weights2[w]));
+						}
+						
+						deviation = deviation + distance;
+					}
+				}
+			}			
+		}
+		return deviation;
+	}
 	public void paint(Graphics g) {
 
 		Walls w = new Walls();
@@ -332,8 +394,10 @@ public class Main extends JPanel implements KeyListener {
 			}
 		}
 		RemoveDust();
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(2));
 		for (int i = 0; i < dust.size(); i++) {
-			g.drawLine((int) dust.get(i)[0], (int) dust.get(i)[1], (int) dust.get(i)[0], (int) dust.get(i)[1]);
+			g2.drawLine((int) dust.get(i)[0], (int) dust.get(i)[1], (int) dust.get(i)[0], (int) dust.get(i)[1]);
 		}
 	}
 

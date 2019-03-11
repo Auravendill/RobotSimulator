@@ -2,10 +2,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
+	
 	double[] fitnessThisGeneration;
 	public NeuralNetwork[] TournamentSelection(int tournamentSize,int amountOfWinners, int runTime, int radius, NeuralNetwork[] nn) {
 		NeuralNetwork[] tournamentWinners = new NeuralNetwork[amountOfWinners];
-		int field = 0;
+		int field = Main.field;
+		
+		
+		
 		double[] fitness = new double[nn.length];
 		Evaluation e = new Evaluation();
 		Walls w = new Walls();

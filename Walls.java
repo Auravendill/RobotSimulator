@@ -5,7 +5,7 @@ public class Walls {
 			{ 50, 250, 350, 250 }, { 100, 100, 250, 100 }, { 100, 100, 100, 150 }, { 250, 100, 250, 150 },
 			{ 100, 150, 250, 150 } }; // {x,y,x2,y2}
 	int[][] walls1 = { { 50, 50, 50, 250 }, { 50, 50, 350, 50 }, { 350, 50, 350, 250 }, { 50, 250, 350, 250 } }; // {x,y,x2,y2}
-
+	int[][] walls2 = { { 50, 50, 250, 50 }, { 50, 50, 50, 350 }, {  50,350, 250, 350 }, { 250,50, 250 , 350} };
 	public int[][] getWalls(int i) {
 
 		
@@ -13,7 +13,11 @@ public class Walls {
 			return walls0;
 		} else if (i == 1) {
 			return walls1;
-		} else {
+		} else if(i == 2) {
+			return walls2;
+			
+		}
+		else {
 			return null;
 		}
 
