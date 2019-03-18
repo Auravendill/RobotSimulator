@@ -1,17 +1,21 @@
 public class KalmanFilter {
-    double xStart = Main.Xpos;
-    double yStart = Main.Ypos;
-    double thetaStart = Main.Angle;
-
-
+    double xInit = Main.Xpos;
+    double yInit = Main.Ypos;
+    double thetaInit = Main.Angle;
+    //double vInit = (Main.Vl+Main.Vr)/2;
+    //double wInit = (Main.Vr-Main.Vl)/Main.radius*2;
 
     int n = 3;
     private double[] muPre,z = new double[n];
-    private double[] mu = {xStart,yStart,thetaStart};
+    private double[] mu = {xInit, yInit, thetaInit};
     private double[] u = new double[n-1];
     private double[][] I = {{1,0,0},{0,1,0},{0,0,1}};
-    private double[][] B,R,K,C,Q,Sigma,SigmaPre = new double[n][n];
+    private double[][] K,Q,SigmaPre = new double[n][n];
     private double[][] A = I;
+    private double[][] C = I;
+    private double[][] B = {{Main.deltaTime*Math.cos(thetaInit),0},{Main.deltaTime*Math.sin(thetaInit),0},{0,Main.deltaTime}};
+    private double[][] Sigma = {{10,0,0},{0,10,0},{0,0,10}}; // Initial with small values
+    private double[][] R =  {{10,0,0},{0,10,0},{0,0,10}}; // Initial with small values
 
     private double[][] matrix2Multiply(double[][] a, double[][] b){
         double[][] c = new double[n][n];
@@ -113,8 +117,13 @@ public class KalmanFilter {
 
     public void kalmanFilter(){
 
-
         // Prediction
+        B[0][0] = Main.deltaTime*Math.cos(mu[2]);
+        B[1][0] = Main.deltaTime*Math.sin(mu[2]);
+
+        u = new double[]{(Main.Vl+Main.Vr)/2,(Main.Vr-Main.Vl)/Main.radius*2};
+        z = new double[]{0,0,0}; // z = {x,y,theta} from sense
+
         muPre = addVector(matrVecMult(A,mu), matrVecMult(B,u));
         SigmaPre =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
 
