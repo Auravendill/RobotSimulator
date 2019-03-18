@@ -11,7 +11,7 @@ public class NeuralNetwork {
 
 	int inputNodes, hiddenNodes, outputNodes;
 
-	double speedMax = 15;
+	//double speedMax = 15;
 	// int population = 20;
 	int weightsSize = inputNodes * hiddenNodes + outputNodes * hiddenNodes;
 	// public double[][] weightsPopulation = new double[population][weightsSize];
@@ -77,7 +77,7 @@ public class NeuralNetwork {
 
 		double[] speed = new double[2];
 		for (int i = 0; i < outputNodes; i++) {
-			speed[i] = activationLayer3[i] * 2 * speedMax - speedMax;
+			speed[i] = activationLayer3[i] * 2 * Main.MaxV - Main.MaxV;
 		}
 
 		return speed;// placeholder

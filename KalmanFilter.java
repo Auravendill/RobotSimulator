@@ -12,7 +12,7 @@ public class KalmanFilter {
     double[][] Q = new double[n][n];
     double[][] I = {{1,0,0},{0,1,0},{0,0,1}};
 
-    public double[][] matrix2Multiply(double[][] a, double[][] b){
+    private double[][] matrix2Multiply(double[][] a, double[][] b){
         double[][] c = new double[n][n];
         double sum;
         for (int i = 0; i < n; i++) {
@@ -27,10 +27,10 @@ public class KalmanFilter {
         }
         return c;
     }
-    public double[][] matrix3Multiply(double[][]a, double[][] b, double[][] c){
+    private double[][] matrix3Multiply(double[][]a, double[][] b, double[][] c){
         return matrix2Multiply(matrix2Multiply(a,b),c);
     }
-    public double[] matrixVectorMultiply(double[][] a, double[] b){
+    private double[] matrixVectorMultiply(double[][] a, double[] b){
         double[] c = new double[n];
         double sum;
         for (int i = 0; i < n; i++) {
@@ -42,7 +42,7 @@ public class KalmanFilter {
         }
         return c;
     }
-    public double[][] addMatrix(double[][] a, double[][] b){
+    private double[][] addMatrix(double[][] a, double[][] b){
         double[][] c = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -52,14 +52,14 @@ public class KalmanFilter {
         }
         return c;
     }
-    public double[] addVector(double[] a, double[] b){
+    private double[] addVector(double[] a, double[] b){
         double[] c = new double[n];
         for (int i = 0; i < n; i++) {
             c[i] = a[i] + b[i];
         }
         return c;
     }
-    public double[][] substractionMatrix(double[][] a, double[][] b){
+    private double[][] substractionMatrix(double[][] a, double[][] b){
         double[][] c = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -69,14 +69,14 @@ public class KalmanFilter {
         }
         return c;
     }
-    public double[] substractionVector(double[] a, double[] b){
+    private double[] substractionVector(double[] a, double[] b){
         double[] c = new double[n];
         for (int i = 0; i < n; i++) {
             c[i] = a[i] - b[i];
         }
         return c;
     }
-    public double[][] transpose(double[][] a){
+    private double[][] transpose(double[][] a){
         double[][] c = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -86,10 +86,28 @@ public class KalmanFilter {
         }
         return c;
     }
-    public double[][] inverse(double[][] a){
-        double[][] c = new double[n][n];
-
+    private double det(double[][] a){
+        double c = a[0][2]*a[1][0]*a[2][1] + a[0][1]*a[1][2]*a[2][0]+a[0][0]*a[1][1]*a[2][2]
+                -a[0][0]*a[2][1]*a[1][2]-a[1][0]*a[0][1]*a[2][2] - a[0][2]*a[1][1]*a[2][0];
         return c;
+    }
+    private double[][] inv(double[][] a){
+
+        double[][] inverse = new double[n][n];
+        double determinant = det(a);
+
+        inverse[0][0] = (a[1][1]*a[2][2]-a[1][2]*a[2][1])/determinant;
+        inverse[0][1] = -(a[1][0]*a[2][2]-a[1][2]*a[2][0])/determinant;
+        inverse[0][2] = (a[1][0]*a[2][1]-a[1][1]*a[2][0])/determinant;
+        inverse[1][0] = -(a[0][1]*a[2][2]-a[0][2]*a[2][1])/determinant;
+        inverse[1][1] = (a[0][0]*a[2][2]-a[0][2]*a[2][0])/determinant;
+        inverse[1][2] =-( a[0][0]*a[2][1]-a[0][1]*a[2][0])/determinant;
+        inverse[2][0] = (a[0][1]*a[1][2]-a[0][2]*a[1][1])/determinant;
+        inverse[2][1] = -(a[0][0]*a[1][2]-a[0][2]*a[1][0])/determinant;
+        inverse[2][2] = (a[0][0]*a[1][1]-a[0][1]*a[1][0])/determinant;
+        inverse = transpose(inverse);
+
+        return inverse;
     }
 
     public void kalmanFilter(){
@@ -98,7 +116,7 @@ public class KalmanFilter {
         Sigma =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
 
         double[][] error = addMatrix(Q,matrix3Multiply(C,Sigma,transpose(C)));
-        K = matrix3Multiply(Sigma,transpose(C),inverse(error));
+        K = matrix3Multiply(Sigma,transpose(C),inv(error));
         mu = addVector(mu,matrixVectorMultiply(K,substractionVector(z,matrixVectorMultiply(C,mu))));
         Sigma = matrix2Multiply(substractionMatrix(I,matrix2Multiply(K,C)),Sigma);
 
