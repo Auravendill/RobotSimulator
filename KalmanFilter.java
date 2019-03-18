@@ -1,16 +1,17 @@
 public class KalmanFilter {
+    double xStart = Main.Xpos;
+    double yStart = Main.Ypos;
+    double thetaStart = Main.Angle;
+
+
+
     int n = 3;
-    public double[] mu = new double[n];
-    double[][] A = new double[n][n];
-    double[][] B = new double[n][n];
-    double[] u = new double[n-1];
-    double[][] Sigma = new double[n][n];
-    double[][] R = new double[n][n];
-    double[][] K = new double[n][n];
-    double[][] C = new double[n][n];
-    double[] z = new double[n];
-    double[][] Q = new double[n][n];
-    double[][] I = {{1,0,0},{0,1,0},{0,0,1}};
+    private double[] muPre,z = new double[n];
+    private double[] mu = {xStart,yStart,thetaStart};
+    private double[] u = new double[n-1];
+    private double[][] I = {{1,0,0},{0,1,0},{0,0,1}};
+    private double[][] B,R,K,C,Q,Sigma,SigmaPre = new double[n][n];
+    private double[][] A = I;
 
     private double[][] matrix2Multiply(double[][] a, double[][] b){
         double[][] c = new double[n][n];
@@ -30,7 +31,7 @@ public class KalmanFilter {
     private double[][] matrix3Multiply(double[][]a, double[][] b, double[][] c){
         return matrix2Multiply(matrix2Multiply(a,b),c);
     }
-    private double[] matrixVectorMultiply(double[][] a, double[] b){
+    private double[] matrVecMult(double[][] a, double[] b){
         double[] c = new double[n];
         double sum;
         for (int i = 0; i < n; i++) {
@@ -59,7 +60,7 @@ public class KalmanFilter {
         }
         return c;
     }
-    private double[][] substractionMatrix(double[][] a, double[][] b){
+    private double[][] substraMatrix(double[][] a, double[][] b){
         double[][] c = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -69,7 +70,7 @@ public class KalmanFilter {
         }
         return c;
     }
-    private double[] substractionVector(double[] a, double[] b){
+    private double[] substraVector(double[] a, double[] b){
         double[] c = new double[n];
         for (int i = 0; i < n; i++) {
             c[i] = a[i] - b[i];
@@ -112,13 +113,16 @@ public class KalmanFilter {
 
     public void kalmanFilter(){
 
-        mu = addVector(matrixVectorMultiply(A,mu),matrixVectorMultiply(B,u));
-        Sigma =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
 
-        double[][] error = addMatrix(Q,matrix3Multiply(C,Sigma,transpose(C)));
-        K = matrix3Multiply(Sigma,transpose(C),inv(error));
-        mu = addVector(mu,matrixVectorMultiply(K,substractionVector(z,matrixVectorMultiply(C,mu))));
-        Sigma = matrix2Multiply(substractionMatrix(I,matrix2Multiply(K,C)),Sigma);
+        // Prediction
+        muPre = addVector(matrVecMult(A,mu), matrVecMult(B,u));
+        SigmaPre =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
+
+        // Correction
+        double[][] error = addMatrix(Q,matrix3Multiply(C,SigmaPre,transpose(C)));
+        K = matrix3Multiply(SigmaPre,transpose(C),inv(error));
+        mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre))));
+        Sigma = matrix2Multiply(substraMatrix(I,matrix2Multiply(K,C)),SigmaPre);
 
     }
 
