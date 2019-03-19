@@ -37,7 +37,7 @@ public class KalmanFilter {
     private double[][] matrix3Multiply(double[][]a, double[][] b, double[][] c){
         return matrix2Multiply(matrix2Multiply(a,b),c);
     }
-    private double[] matrVecMult(double[][] a, double[] b){
+    private double[] matrVecMult(double[][] a, double[] b, int n){
         double[] c = new double[n];
         double sum;
         for (int i = 0; i < n; i++) {
@@ -128,13 +128,13 @@ public class KalmanFilter {
         
         //z= features.get(0);
 
-        muPre = addVector(matrVecMult(A,mu), matrVecMult(B,u));
+        muPre = addVector(matrVecMult(A,mu,3), matrVecMult(B,u,2));
         SigmaPre =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
 
         // Correction
         double[][] error = addMatrix(Q,matrix3Multiply(C,SigmaPre,transpose(C)));
         K = matrix3Multiply(SigmaPre,transpose(C),inv(error));
-        mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre))));
+        mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre,3)),3));
         Sigma = matrix2Multiply(substraMatrix(I,matrix2Multiply(K,C)),SigmaPre);
 
     }
