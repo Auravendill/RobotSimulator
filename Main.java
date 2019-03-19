@@ -404,9 +404,9 @@ public class Main extends JPanel implements KeyListener {
 		
 		int[][] walls = w.getWalls(field);
 		int[][] features = f.getFeatures();
-		//KalmanFilter filter = new KalmanFilter();
-		//filter.kalmanFilter();
-		//double[] temp = filter.getMu();
+		KalmanFilter filter = new KalmanFilter();
+		filter.kalmanFilter();
+		double[] temp = filter.getMu();
 		
 		for (int z = 0; z < walls.length; z++) {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
@@ -449,7 +449,7 @@ public class Main extends JPanel implements KeyListener {
 		}
 		else {
 			
-			//localizationPath.add(temp);
+			localizationPath.add(temp);
 			FeatureDistances = f.getFeatureDistances();
 			
 			
