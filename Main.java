@@ -67,6 +67,7 @@ public class Main extends JPanel implements KeyListener {
 
 	static ArrayList<double[]> dust = new ArrayList<double[]>();
 	static ArrayList<double[]> path = new ArrayList<double[]>();
+	static ArrayList<double[]> localizationPath = new ArrayList<double[]>();
 	static UseSensors sensor = new UseSensors(radius);
 
 	public static void main(String[] args) {
@@ -400,8 +401,12 @@ public class Main extends JPanel implements KeyListener {
 
 		Walls w = new Walls();
 		FeatureDetection f = new FeatureDetection();
+		
 		int[][] walls = w.getWalls(field);
 		int[][] features = f.getFeatures();
+		//KalmanFilter filter = new KalmanFilter();
+		//filter.kalmanFilter();
+		//double[] temp = filter.getMu();
 		
 		for (int z = 0; z < walls.length; z++) {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
@@ -444,7 +449,7 @@ public class Main extends JPanel implements KeyListener {
 		}
 		else {
 			
-			
+			//localizationPath.add(temp);
 			FeatureDistances = f.getFeatureDistances();
 			
 			
@@ -452,6 +457,11 @@ public class Main extends JPanel implements KeyListener {
 			for (int i = 1; i < path.size(); i++) {
 				g.drawLine((int) path.get(i-1)[0], (int) path.get(i-1)[1], (int) path.get(i)[0], (int) path.get(i)[1]);
 			}
+			
+			g.setColor(Color.YELLOW);
+			//for (int i = 0; i < localizationPath.size(); i++) {
+			//	g.drawLine((int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1], (int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1]);
+			//}
 			
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setStroke(new BasicStroke(5));

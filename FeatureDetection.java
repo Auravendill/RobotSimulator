@@ -1,9 +1,11 @@
+import java.util.ArrayList;
 
 public class FeatureDetection {
 
 	int[][] features = { { 80, 80 }, { 230, 220 }, {280,100}, {150,150}, {170,70}, {70,200}, {330,180}, {250,140}};
 	
 	double[][] featureVector = new double[features.length][2];
+	ArrayList <double[]> Vector = new ArrayList <double[]>();
 	double angle =0;
 	
 	public int[][] getFeatures() {
@@ -27,4 +29,15 @@ public class FeatureDetection {
 		}
 		return featureVector;
 	}
+	/*public ArrayList<double[]> getFeaturesClose(int distance) {
+		double[][] featureVectors = getFeatureDistances();
+		for(int i=0;i<featureVectors.length;i++) {
+			if(featureVectors[i][0]<distance) {
+				double[] vector = {features[i][0], features[i][1], featureVectors[i][1]};
+				Vector.add(vector);
+			}
+		}
+		return Vector;
+		
+	}*/
 }

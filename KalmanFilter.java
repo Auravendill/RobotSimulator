@@ -1,10 +1,12 @@
+import java.util.ArrayList;
+
 public class KalmanFilter {
     double xInit = Main.Xpos;
     double yInit = Main.Ypos;
     double thetaInit = Main.Angle;
     //double vInit = (Main.Vl+Main.Vr)/2;
     //double wInit = (Main.Vr-Main.Vl)/Main.radius*2;
-
+    FeatureDetection f = new FeatureDetection();
     int n = 3;
     private double[] muPre,z = new double[n];
     private double[] mu = {xInit, yInit, thetaInit};
@@ -116,13 +118,15 @@ public class KalmanFilter {
     }
 
     public void kalmanFilter(){
-
+    	//ArrayList <double[]> features = f.getFeaturesClose(Main.featureRange);
         // Prediction
         B[0][0] = Main.deltaTime*Math.cos(mu[2]);
         B[1][0] = Main.deltaTime*Math.sin(mu[2]);
 
         u = new double[]{(Main.Vl+Main.Vr)/2,(Main.Vr-Main.Vl)/Main.radius*2};
         z = new double[]{0,0,0}; // z = {x,y,theta} from sense
+        
+        //z= features.get(0);
 
         muPre = addVector(matrVecMult(A,mu), matrVecMult(B,u));
         SigmaPre =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
@@ -135,7 +139,9 @@ public class KalmanFilter {
 
     }
 
-
+    public double[] getMu(){
+    	return mu;
+    }
 
 
 
