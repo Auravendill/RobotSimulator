@@ -404,9 +404,9 @@ public class Main extends JPanel implements KeyListener {
 		
 		int[][] walls = w.getWalls(field);
 		int[][] features = f.getFeatures();
-		KalmanFilter filter = new KalmanFilter();
-		filter.kalmanFilter();
-		double[] temp = filter.getMu();
+		//KalmanFilter filter = new KalmanFilter();
+		//filter.kalmanFilter();
+		//double[] temp = filter.getMu();
 		
 		for (int z = 0; z < walls.length; z++) {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
@@ -449,7 +449,7 @@ public class Main extends JPanel implements KeyListener {
 		}
 		else {
 			
-			localizationPath.add(temp);
+			//localizationPath.add(temp);
 			FeatureDistances = f.getFeatureDistances();
 			
 			
@@ -507,7 +507,7 @@ public class Main extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (useNN == false) {
+		if (useNN == false&& localization == false) {
 			int id = e.getID();
 			String keyString;
 			if (id == KeyEvent.KEY_PRESSED) {
@@ -547,7 +547,40 @@ public class Main extends JPanel implements KeyListener {
 
 			}
 		}
-
+		if(localization == true) {
+			int id = e.getID();
+			String keyString;
+			if (id == KeyEvent.KEY_PRESSED) {
+				char c = e.getKeyChar();
+				if ("w".contentEquals(Character.toString(c))) {
+					Vl = Vl + 1;
+					Vr = Vr + 1;
+				} else if ("s".contentEquals(Character.toString(c))) {
+					Vl = Vl - 1;
+					Vr = Vr - 1;
+				 
+				} else if ("a".contentEquals(Character.toString(c))) {
+					Vr = Vr + 1;
+					Vl = Vl - 1;
+				} else if ("d".contentEquals(Character.toString(c))) {
+					Vr = Vr - 1;
+					Vl = Vl + 1;
+				}
+				if (Vr > MaxV) {
+					Vr = MaxV;
+				}
+				if (Vl > MaxV) {
+					Vl = MaxV;
+				}
+				if (Vr < -MaxV) {
+					Vr = -MaxV;
+				}
+				if (Vl < -MaxV) {
+					Vl = -MaxV;
+				}
+			}
+		
+		}
 	}
 
 	@Override
