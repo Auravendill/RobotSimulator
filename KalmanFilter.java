@@ -12,12 +12,13 @@ public class KalmanFilter {
     private double[] mu = {xInit, yInit, thetaInit};
     private double[] u = new double[n-1];
     private double[][] I = {{1,0,0},{0,1,0},{0,0,1}};
-    private double[][] K,Q,SigmaPre = new double[n][n];
+    private double[][] K,SigmaPre = new double[n][n];
     private double[][] A = I;
     private double[][] C = I;
     private double[][] B = {{Main.deltaTime*Math.cos(thetaInit),0},{Main.deltaTime*Math.sin(thetaInit),0},{0,Main.deltaTime}};
     private double[][] Sigma = {{10,0,0},{0,10,0},{0,0,10}}; // Initial with small values
     private double[][] R =  {{10,0,0},{0,10,0},{0,0,10}}; // Initial with small values
+    private double[][] Q =  {{10,0,0},{0,10,0},{0,0,10}}; // Initial with small values
 
     private double[][] matrix2Multiply(double[][] a, double[][] b){
         double[][] c = new double[n][n];
