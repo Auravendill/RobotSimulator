@@ -404,9 +404,10 @@ public class Main extends JPanel implements KeyListener {
 		
 		int[][] walls = w.getWalls(field);
 		int[][] features = f.getFeatures();
-		//KalmanFilter filter = new KalmanFilter();
-		//filter.kalmanFilter();
-		//double[] temp = filter.getMu();
+		KalmanFilter filter = new KalmanFilter();
+		
+		filter.kalmanFilter();
+		double[] temp = filter.getMu();
 		
 		for (int z = 0; z < walls.length; z++) {
 			g.drawLine(walls[z][0], walls[z][1], walls[z][2], walls[z][3]);
@@ -449,7 +450,7 @@ public class Main extends JPanel implements KeyListener {
 		}
 		else {
 			
-			//localizationPath.add(temp);
+			localizationPath.add(temp);
 			FeatureDistances = f.getFeatureDistances();
 			
 			
@@ -458,10 +459,10 @@ public class Main extends JPanel implements KeyListener {
 				g.drawLine((int) path.get(i-1)[0], (int) path.get(i-1)[1], (int) path.get(i)[0], (int) path.get(i)[1]);
 			}
 			
-			g.setColor(Color.YELLOW);
-			//for (int i = 0; i < localizationPath.size(); i++) {
-			//	g.drawLine((int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1], (int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1]);
-			//}
+			g.setColor(Color.RED);
+			for (int i = 0; i < localizationPath.size(); i++) {
+				g.drawLine((int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1], (int) localizationPath.get(i)[0], (int) localizationPath.get(i)[1]);
+			}
 			
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setStroke(new BasicStroke(5));

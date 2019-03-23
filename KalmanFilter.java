@@ -38,12 +38,12 @@ public class KalmanFilter {
     private double[][] matrix3Multiply(double[][]a, double[][] b, double[][] c){
         return matrix2Multiply(matrix2Multiply(a,b),c);
     }
-    private double[] matrVecMult(double[][] a, double[] b, int n){
-        double[] c = new double[n];
+    private double[] matrVecMult(double[][] a, double[] b){
+        double[] c = new double[b.length];
         double sum;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < b.length; i++) {
             sum = 0.;
-            for (int k = 0; k < n; k++) {
+            for (int k = 0; k < b.length; k++) {
                 sum += a[i][k]*b[k];
             }
             c[i] = sum;
@@ -60,9 +60,9 @@ public class KalmanFilter {
         }
         return c;
     }
-    private double[] addVector(double[] a, double[] b, int n){
-        double[] c = new double[n];
-        for (int i = 0; i < n; i++) {
+    private double[] addVector(double[] a, double[] b){
+        double[] c = new double[b.length];
+        for (int i = 0; i < b.length; i++) {
             c[i] = a[i] + b[i];
         }
         return c;
@@ -78,8 +78,8 @@ public class KalmanFilter {
         return c;
     }
     private double[] substraVector(double[] a, double[] b){
-        double[] c = new double[n];
-        for (int i = 0; i < n; i++) {
+        double[] c = new double[b.length];
+        for (int i = 0; i < b.length; i++) {
             c[i] = a[i] - b[i];
         }
         return c;
@@ -123,19 +123,41 @@ public class KalmanFilter {
         // Prediction
         B[0][0] = Main.deltaTime*Math.cos(mu[2]);
         B[1][0] = Main.deltaTime*Math.sin(mu[2]);
-
-        u = new double[]{(Main.Vl+Main.Vr)/2,(Main.Vr-Main.Vl)/Main.radius*2};
-        z = new double[]{0,0,0}; // z = {x,y,theta} from sense
         
-        //z= features.get(0);
+        double Zx=0;
+        double Zy=0;
+        //System.out.println(Zx);
+        int counter =0;
+        for(int i=0; i< f.features.length;i++) {
+        	double[] input = f.generateNoisyInput(i, Main.Xpos, Main.Ypos);
+        	
+        	if(input[0]<= Main.featureRange) {
+        		counter++;
+        	double angle = input[1]+180;
+        	if(angle>360) {
+        		angle = angle -360;
+        	}
+        	
+        	Zx = Zx+input[0]*Math.cos(angle) + f.features[i][0];
 
-        muPre = addVector(matrVecMult(A,mu,3), matrVecMult(B,u,2),2);
+        	Zy=Zy+input[0]*Math.sin(angle) +f.features[i][1];
+        	}
+        	
+        }
+        Zx= Zx/counter;
+    	Zy= Zy/counter;
+        u = new double[]{(Main.Vl+Main.Vr)/2,(Main.Vr-Main.Vl)/Main.radius*2};
+        z = new double[]{Zx,Zy,Main.Angle}; // z = {x,y,theta} from sense
+        
+
+
+        muPre = addVector(matrVecMult(A,mu), matrVecMult(B,u));
         SigmaPre =addMatrix(matrix3Multiply(A,Sigma,transpose(A)),R);
 
         // Correction
         double[][] error = addMatrix(Q,matrix3Multiply(C,SigmaPre,transpose(C)));
         K = matrix3Multiply(SigmaPre,transpose(C),inv(error));
-        mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre,3)),3),3);
+        mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre))));
         Sigma = matrix2Multiply(substraMatrix(I,matrix2Multiply(K,C)),SigmaPre);
 
     }
