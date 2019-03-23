@@ -65,7 +65,7 @@ public class FeatureDetection {
 		return (Math.random() - min) * (max - min);
 	}
 
-	public double[] generateNoisyInput(int featureNumber) {
+	public double[] generateNoisyInput(int featureNumber, double positionX, double positionY) {
 		double distance;
 		double angle;
 		double feature;
@@ -73,7 +73,8 @@ public class FeatureDetection {
 		double[][] distArray = getFeatureDistances();
 
 		distance = distArray[featureNumber][0] + noiseGenerator();
-		angle = distArray[featureNumber][1] + noiseGenerator();
+		angle = atan2(features[featureNumber][0] - positionX, features[featureNumber][1] - positionY)
+				- distArray[featureNumber][1] + noiseGenerator();
 		feature = featureNumber;// currently no noise here;
 
 		double[] result = { distance, angle, feature };
