@@ -40,6 +40,7 @@ public class KalmanFilter {
     }
     private double[] matrVecMult(double[][] a, double[] b){
         double[] c = new double[b.length];
+        
         double sum;
         for (int i = 0; i < b.length; i++) {
             sum = 0.;
@@ -62,6 +63,7 @@ public class KalmanFilter {
     }
     private double[] addVector(double[] a, double[] b){
         double[] c = new double[b.length];
+        
         for (int i = 0; i < b.length; i++) {
             c[i] = a[i] + b[i];
         }
@@ -79,6 +81,7 @@ public class KalmanFilter {
     }
     private double[] substraVector(double[] a, double[] b){
         double[] c = new double[b.length];
+        
         for (int i = 0; i < b.length; i++) {
             c[i] = a[i] - b[i];
         }
@@ -126,7 +129,7 @@ public class KalmanFilter {
         
         double Zx=0;
         double Zy=0;
-        //System.out.println(Zx);
+        
         int counter =0;
         for(int i=0; i< f.features.length;i++) {
         	double[] input = f.generateNoisyInput(i, Main.Xpos, Main.Ypos);
@@ -138,9 +141,9 @@ public class KalmanFilter {
         		angle = angle -360;
         	}
         	
-        	Zx = Zx+input[0]*Math.cos(angle) + f.features[i][0];
+        	Zx = Zx+input[0]*Math.cos(Math.toRadians(angle)) + f.features[i][0];
 
-        	Zy=Zy+input[0]*Math.sin(angle) +f.features[i][1];
+        	Zy = Zy+input[0]*-Math.sin(Math.toRadians(angle)) +f.features[i][1];
         	}
         	
         }
@@ -159,6 +162,7 @@ public class KalmanFilter {
         K = matrix3Multiply(SigmaPre,transpose(C),inv(error));
         mu = addVector(muPre, matrVecMult(K, substraVector(z, matrVecMult(C,muPre))));
         Sigma = matrix2Multiply(substraMatrix(I,matrix2Multiply(K,C)),SigmaPre);
+        
 
     }
 
