@@ -59,8 +59,8 @@ public class FeatureDetection {
 
 	private double noiseGenerator() {
 		// dummy values
-		double min = -2;
-		double max = 2;
+		double min = -3;
+		double max = 3;
 
 		return (Math.random() - min) * (max - min);
 	}

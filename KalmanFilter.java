@@ -169,6 +169,12 @@ public class KalmanFilter {
     public double[] getMu(){
     	return mu;
     }
+    public double[][] getSigma(){
+    	return Sigma;
+    }
+    public double[] getZ(){
+    	return z;
+    }
 
 
 
